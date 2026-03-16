@@ -23,10 +23,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<CourseCatalog />} />
             <Route path="/training" element={<CourseCatalog />} />
-            <Route path="/training/:courseId" element={<CourseDetail />} />
-            <Route path="/training/:courseId/:lessonId" element={<LessonPlayer />} />
             <Route path="/training/admin" element={<AdminCourses />} />
             <Route path="/training/admin/:courseId" element={<AdminCurriculum />} />
+            <Route path="/training/:courseId" element={<CourseDetail />} />
+            <Route path="/training/:courseId/:lessonId" element={<LessonPlayer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
