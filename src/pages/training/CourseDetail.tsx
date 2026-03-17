@@ -16,7 +16,7 @@ import type { SectionWithLessons, LessonWithStatus } from '@/types/lms';
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { getCourseWithProgress, getSectionsWithLessons, getNextLesson, dispatch } = useLms();
+  const { getCourseWithProgress, getSectionsWithLessons, getNextLesson, enroll } = useLms();
 
   const course = getCourseWithProgress(courseId!);
   const sections = getSectionsWithLessons(courseId!);
