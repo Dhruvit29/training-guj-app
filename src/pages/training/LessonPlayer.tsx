@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock,
+  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock, Award,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LessonWithStatus } from '@/types/lms';
@@ -105,9 +105,14 @@ const LessonPlayer: React.FC = () => {
             <div className="p-4 bg-[hsl(var(--success))]/10 rounded-lg border border-[hsl(var(--success))]/20 text-center">
               <p className="text-lg font-semibold text-foreground">🎉 Course Complete!</p>
               <p className="text-sm text-muted-foreground mt-1">You've finished all lessons in this course.</p>
-              <Button variant="outline" onClick={() => navigate('/training')} className="mt-3">
-                Back to Training Center
-              </Button>
+              <div className="flex items-center justify-center gap-3 mt-3">
+                <Button variant="outline" onClick={() => navigate('/training')}>
+                  Back to Training Center
+                </Button>
+                <Button onClick={() => navigate(`/training/${courseId}/certificate`)} className="gap-2">
+                  <Award className="w-4 h-4" /> View Certificate
+                </Button>
+              </div>
             </div>
           )}
         </div>
