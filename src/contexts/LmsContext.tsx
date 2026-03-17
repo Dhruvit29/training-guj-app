@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useMemo, useEffect } from 'react';
 import type {
   Course, Section, Lesson, UserProgress, UserCourseEnrollment,
   CourseWithProgress, SectionWithLessons, LessonStatus,
 } from '@/types/lms';
 import { mockCourses, mockSections, mockLessons } from '@/data/mockData';
+import { trainingApi } from '@/services/trainingApi';
 
 // ---------------------------------------------------------------------------
 // State
@@ -15,6 +16,7 @@ interface LmsState {
   lessons: Lesson[];
   userProgress: Record<string, UserProgress>; // keyed by lessonId
   enrollments: Record<string, UserCourseEnrollment>; // keyed by courseId
+  syncing: boolean;
 }
 
 type LmsAction =
@@ -31,7 +33,10 @@ type LmsAction =
   | { type: 'UPDATE_LESSON'; lesson: Lesson }
   | { type: 'DELETE_LESSON'; lessonId: string }
   | { type: 'REORDER_SECTIONS'; courseId: string; sectionIds: string[] }
-  | { type: 'REORDER_LESSONS'; sectionId: string; lessonIds: string[] };
+  | { type: 'REORDER_LESSONS'; sectionId: string; lessonIds: string[] }
+  | { type: 'SYNC_PROGRESS'; progress: Record<string, UserProgress> }
+  | { type: 'SYNC_ENROLLMENTS'; enrollments: Record<string, UserCourseEnrollment> }
+  | { type: 'SET_SYNCING'; syncing: boolean };
 
 const initialState: LmsState = {
   courses: mockCourses,
@@ -45,6 +50,7 @@ const initialState: LmsState = {
     'course-1': { courseId: 'course-1', enrolledAt: '2024-05-15', completedAt: null },
     'course-2': { courseId: 'course-2', enrolledAt: '2024-06-01', completedAt: null },
   },
+  syncing: false,
 };
 
 // ---------------------------------------------------------------------------
@@ -53,6 +59,15 @@ const initialState: LmsState = {
 
 function lmsReducer(state: LmsState, action: LmsAction): LmsState {
   switch (action.type) {
+    case 'SET_SYNCING':
+      return { ...state, syncing: action.syncing };
+
+    case 'SYNC_PROGRESS':
+      return { ...state, userProgress: { ...state.userProgress, ...action.progress } };
+
+    case 'SYNC_ENROLLMENTS':
+      return { ...state, enrollments: { ...state.enrollments, ...action.enrollments } };
+
     case 'ENROLL':
       return {
         ...state,
@@ -165,6 +180,10 @@ function lmsReducer(state: LmsState, action: LmsAction): LmsState {
 interface LmsContextValue {
   state: LmsState;
   dispatch: React.Dispatch<LmsAction>;
+  // API-backed actions
+  enroll: (courseId: string) => Promise<void>;
+  updateProgress: (lessonId: string, maxWatchedSeconds: number, durationMinutes: number) => Promise<void>;
+  markComplete: (lessonId: string) => Promise<void>;
   // Computed selectors
   getCoursesWithProgress: () => CourseWithProgress[];
   getCourseWithProgress: (courseId: string) => CourseWithProgress | undefined;
@@ -177,6 +196,62 @@ const LmsContext = createContext<LmsContextValue | null>(null);
 
 export function LmsProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(lmsReducer, initialState);
+
+  // Fetch progress & enrollments from backend on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      dispatch({ type: 'SET_SYNCING', syncing: true });
+      try {
+        const [progress, enrollments] = await Promise.all([
+          trainingApi.fetchUserProgress(),
+          trainingApi.fetchUserEnrollments(),
+        ]);
+        if (!cancelled) {
+          if (Object.keys(progress).length > 0) {
+            dispatch({ type: 'SYNC_PROGRESS', progress });
+          }
+          if (Object.keys(enrollments).length > 0) {
+            dispatch({ type: 'SYNC_ENROLLMENTS', enrollments });
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to sync from backend, using local data:', err);
+      } finally {
+        if (!cancelled) dispatch({ type: 'SET_SYNCING', syncing: false });
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  // API-backed actions that optimistically update state then call backend
+  const enroll = useCallback(async (courseId: string) => {
+    dispatch({ type: 'ENROLL', courseId });
+    try {
+      await trainingApi.enrollInCourse({ courseId });
+    } catch (err) {
+      console.error('Failed to sync enrollment:', err);
+    }
+  }, []);
+
+  const updateProgress = useCallback(async (lessonId: string, maxWatchedSeconds: number, durationMinutes: number) => {
+    dispatch({ type: 'UPDATE_PROGRESS', lessonId, maxWatchedSeconds, durationMinutes });
+    try {
+      await trainingApi.updateLessonProgress({ lessonId, maxWatchedSeconds, durationMinutes });
+    } catch (err) {
+      console.error('Failed to sync progress:', err);
+    }
+  }, []);
+
+  const markComplete = useCallback(async (lessonId: string) => {
+    dispatch({ type: 'MARK_COMPLETE', lessonId });
+    try {
+      await trainingApi.markLessonComplete(lessonId);
+    } catch (err) {
+      console.error('Failed to sync completion:', err);
+    }
+  }, []);
 
   const getAllLessonsOrdered = useCallback((courseId: string): Lesson[] => {
     const courseSections = state.sections
@@ -257,12 +332,15 @@ export function LmsProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => ({
     state,
     dispatch,
+    enroll,
+    updateProgress,
+    markComplete,
     getCoursesWithProgress,
     getCourseWithProgress,
     getSectionsWithLessons,
     getNextLesson,
     getAllLessonsOrdered,
-  }), [state, dispatch, getCoursesWithProgress, getCourseWithProgress, getSectionsWithLessons, getNextLesson, getAllLessonsOrdered]);
+  }), [state, dispatch, enroll, updateProgress, markComplete, getCoursesWithProgress, getCourseWithProgress, getSectionsWithLessons, getNextLesson, getAllLessonsOrdered]);
 
   return <LmsContext.Provider value={value}>{children}</LmsContext.Provider>;
 }
