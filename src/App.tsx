@@ -7,6 +7,7 @@ import { LmsProvider } from "@/contexts/LmsContext";
 import CourseCatalog from "@/pages/training/CourseCatalog";
 import CourseDetail from "@/pages/training/CourseDetail";
 import LessonPlayer from "@/pages/training/LessonPlayer";
+import CourseCertificate from "@/pages/training/CourseCertificate";
 import AdminCourses from "@/pages/training/AdminCourses";
 import AdminCurriculum from "@/pages/training/AdminCurriculum";
 import NotFound from "./pages/NotFound.tsx";
