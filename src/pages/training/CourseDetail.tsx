@@ -34,7 +34,7 @@ const CourseDetail: React.FC = () => {
   }
 
   const handleEnroll = () => {
-    dispatch({ type: 'ENROLL', courseId: course.id });
+    enroll(course.id);
   };
 
   const handleContinue = () => {

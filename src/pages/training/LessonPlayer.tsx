@@ -31,8 +31,8 @@ const LessonPlayer: React.FC = () => {
   }, [updateProgress, lessonId, currentLesson]);
 
   const handleComplete = useCallback(() => {
-    dispatch({ type: 'MARK_COMPLETE', lessonId: lessonId! });
-  }, [dispatch, lessonId]);
+    markComplete(lessonId!);
+  }, [markComplete, lessonId]);
 
   if (!course || !currentLesson) {
     return (
