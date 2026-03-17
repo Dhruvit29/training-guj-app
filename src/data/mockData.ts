@@ -8,7 +8,7 @@ export const mockCourses: Course[] = [
     thumbnailUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=340&fit=crop',
     isPublished: true,
     createdAt: '2024-01-15',
-    instructor: 'Shri Hariprasad Swami',
+    instructor: 'Sadhu Keshavjivandas',
     category: 'Scripture Study',
     totalDurationMinutes: 180,
   },
