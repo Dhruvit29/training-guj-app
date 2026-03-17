@@ -79,7 +79,12 @@ const CourseDetail: React.FC = () => {
                     </Button>
                   )}
                   {course.progressPercent === 100 && (
-                    <Badge className="bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] mt-3">Course Completed! 🎉</Badge>
+                    <div className="flex items-center gap-3 mt-3">
+                      <Badge className="bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">Course Completed! 🎉</Badge>
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/training/${courseId}/certificate`)} className="gap-2">
+                        <Award className="w-4 h-4" /> View Certificate
+                      </Button>
+                    </div>
                   )}
                 </div>
               ) : (
