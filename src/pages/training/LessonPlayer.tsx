@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock,
+  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock, Award,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LessonWithStatus } from '@/types/lms';
