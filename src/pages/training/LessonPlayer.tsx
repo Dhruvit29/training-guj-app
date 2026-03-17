@@ -14,7 +14,7 @@ import type { LessonWithStatus } from '@/types/lms';
 const LessonPlayer: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { getCourseWithProgress, getSectionsWithLessons, getAllLessonsOrdered, state, dispatch } = useLms();
+  const { getCourseWithProgress, getSectionsWithLessons, getAllLessonsOrdered, state, updateProgress, markComplete } = useLms();
 
   const course = getCourseWithProgress(courseId!);
   const sections = getSectionsWithLessons(courseId!);
@@ -27,17 +27,12 @@ const LessonPlayer: React.FC = () => {
 
   const handleProgress = useCallback((seconds: number) => {
     if (!currentLesson) return;
-    dispatch({
-      type: 'UPDATE_PROGRESS',
-      lessonId: lessonId!,
-      maxWatchedSeconds: seconds,
-      durationMinutes: currentLesson.durationMinutes,
-    });
-  }, [dispatch, lessonId, currentLesson]);
+    updateProgress(lessonId!, seconds, currentLesson.durationMinutes);
+  }, [updateProgress, lessonId, currentLesson]);
 
   const handleComplete = useCallback(() => {
-    dispatch({ type: 'MARK_COMPLETE', lessonId: lessonId! });
-  }, [dispatch, lessonId]);
+    markComplete(lessonId!);
+  }, [markComplete, lessonId]);
 
   if (!course || !currentLesson) {
     return (
