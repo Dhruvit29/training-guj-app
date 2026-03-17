@@ -27,13 +27,8 @@ const LessonPlayer: React.FC = () => {
 
   const handleProgress = useCallback((seconds: number) => {
     if (!currentLesson) return;
-    dispatch({
-      type: 'UPDATE_PROGRESS',
-      lessonId: lessonId!,
-      maxWatchedSeconds: seconds,
-      durationMinutes: currentLesson.durationMinutes,
-    });
-  }, [dispatch, lessonId, currentLesson]);
+    updateProgress(lessonId!, seconds, currentLesson.durationMinutes);
+  }, [updateProgress, lessonId, currentLesson]);
 
   const handleComplete = useCallback(() => {
     dispatch({ type: 'MARK_COMPLETE', lessonId: lessonId! });
