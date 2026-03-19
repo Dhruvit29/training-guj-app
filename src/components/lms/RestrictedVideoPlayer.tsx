@@ -182,7 +182,13 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
         onLoadedMetadata={handleLoadedMetadata}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => { setIsPlaying(false); onComplete(); }}
+        onEnded={() => {
+          setIsPlaying(false);
+          // Only mark complete on video end if configured duration threshold is met
+          if (maxWatchedRef.current >= durationMinutes * 60 * 0.95) {
+            onComplete();
+          }
+        }}
         playsInline
       />
 
