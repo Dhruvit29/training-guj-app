@@ -2,11 +2,12 @@ import React, { useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLms } from '@/contexts/LmsContext';
 import RestrictedVideoPlayer from '@/components/lms/RestrictedVideoPlayer';
+import QuizPlayer from '@/components/lms/QuizPlayer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock, Award,
+  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock, Award, HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LessonWithStatus } from '@/types/lms';
@@ -60,21 +61,34 @@ const LessonPlayer: React.FC = () => {
           </div>
         </div>
 
-        {/* Video player */}
-        <div className="w-full bg-foreground/5">
-          <RestrictedVideoPlayer
-            videoUrl={currentLesson.videoUrl}
-            durationMinutes={currentLesson.durationMinutes}
-            maxWatchedSeconds={progress?.maxWatchedSeconds ?? 0}
-            onProgress={handleProgress}
+        {/* Video player OR Quiz */}
+        {currentLesson.type === 'quiz' && currentLesson.quizQuestions ? (
+          <QuizPlayer
+            questions={currentLesson.quizQuestions}
             onComplete={handleComplete}
+            isAlreadyCompleted={isCompleted}
           />
-        </div>
+        ) : (
+          <div className="w-full bg-foreground/5">
+            <RestrictedVideoPlayer
+              videoUrl={currentLesson.videoUrl}
+              durationMinutes={currentLesson.durationMinutes}
+              maxWatchedSeconds={progress?.maxWatchedSeconds ?? 0}
+              onProgress={handleProgress}
+              onComplete={handleComplete}
+            />
+          </div>
+        )}
 
         {/* Lesson info */}
         <div className="p-6 space-y-4 max-w-4xl">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-foreground">{currentLesson.title}</h1>
+            {currentLesson.type === 'quiz' && (
+              <Badge variant="secondary" className="gap-1">
+                <HelpCircle className="w-3 h-3" /> Quiz
+              </Badge>
+            )}
             {isCompleted && (
               <Badge className="bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">
                 <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
@@ -120,7 +134,7 @@ const LessonPlayer: React.FC = () => {
         </div>
         <ScrollArea className="flex-1">
           <div className="p-2">
-            {sections.map((section, sIdx) => (
+            {sections.map((section) => (
               <div key={section.id} className="mb-3">
                 <p className="text-xs font-semibold text-muted-foreground px-2 py-1.5 uppercase tracking-wider">
                   {section.title}
@@ -149,12 +163,18 @@ function SidebarLesson({
   lesson: LessonWithStatus; index: number; courseId: string; isCurrent: boolean;
 }) {
   const isClickable = lesson.status !== 'locked';
-  const icon = {
-    locked: <Lock className="w-3.5 h-3.5 text-muted-foreground" />,
-    available: <Circle className="w-3.5 h-3.5 text-primary" />,
-    'in-progress': <Play className="w-3.5 h-3.5 text-primary" />,
-    completed: <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--success))]" />,
-  }[lesson.status];
+  const icon = lesson.type === 'quiz'
+    ? lesson.status === 'completed'
+      ? <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--success))]" />
+      : lesson.status === 'locked'
+        ? <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+        : <HelpCircle className="w-3.5 h-3.5 text-primary" />
+    : {
+        locked: <Lock className="w-3.5 h-3.5 text-muted-foreground" />,
+        available: <Circle className="w-3.5 h-3.5 text-primary" />,
+        'in-progress': <Play className="w-3.5 h-3.5 text-primary" />,
+        completed: <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--success))]" />,
+      }[lesson.status];
 
   const content = (
     <div
@@ -169,7 +189,11 @@ function SidebarLesson({
       <span className={cn('flex-1 truncate text-xs', isCurrent ? 'font-medium text-foreground' : 'text-muted-foreground')}>
         {lesson.title}
       </span>
-      <span className="text-[10px] text-muted-foreground">{lesson.durationMinutes}m</span>
+      {lesson.type === 'quiz' ? (
+        <span className="text-[10px] text-muted-foreground">Quiz</span>
+      ) : (
+        <span className="text-[10px] text-muted-foreground">{lesson.durationMinutes}m</span>
+      )}
     </div>
   );
 

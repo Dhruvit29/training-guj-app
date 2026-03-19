@@ -78,34 +78,49 @@ export const mockSections: Section[] = [
 
 export const mockLessons: Lesson[] = [
   // Course 1, Section 1
-  { id: 'les-1-1-1', sectionId: 'sec-1-1', title: 'Welcome & Course Overview', description: 'Introduction to the course structure and objectives.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 10, sortOrder: 1 },
-  { id: 'les-1-1-2', sectionId: 'sec-1-1', title: 'Historical Context', description: 'Understanding the historical significance and origin.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-1-1-1', sectionId: 'sec-1-1', title: 'Welcome & Course Overview', description: 'Introduction to the course structure and objectives.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 10, sortOrder: 1 },
+  { id: 'les-1-1-2', sectionId: 'sec-1-1', title: 'Historical Context', description: 'Understanding the historical significance and origin.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  // Course 1, Section 1 — Quiz
+  { id: 'les-1-1-3', sectionId: 'sec-1-1', title: 'Section 1 Quiz', description: 'Test your understanding of the introduction.', type: 'quiz', videoUrl: '', durationMinutes: 5, sortOrder: 3, quizQuestions: [
+    { id: 'q1', question: 'What is the primary purpose of this course?', options: [
+      { id: 'q1-a', text: 'Entertainment' },
+      { id: 'q1-b', text: 'Understanding core principles of Satsang Diksha' },
+      { id: 'q1-c', text: 'Physical fitness' },
+      { id: 'q1-d', text: 'Cooking' },
+    ], correctOptionId: 'q1-b' },
+    { id: 'q2', question: 'Who is the instructor of this course?', options: [
+      { id: 'q2-a', text: 'Training Team' },
+      { id: 'q2-b', text: 'Tech Team' },
+      { id: 'q2-c', text: 'Sadhu Keshavjivandas' },
+      { id: 'q2-d', text: 'Senior Karyakars' },
+    ], correctOptionId: 'q2-c' },
+  ]},
   // Course 1, Section 2
-  { id: 'les-1-2-1', sectionId: 'sec-1-2', title: 'Morning Routine & Puja', description: 'Establishing a consistent daily spiritual routine.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
-  { id: 'les-1-2-2', sectionId: 'sec-1-2', title: 'Evening Reflection', description: 'Practices for end-of-day spiritual reflection.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
-  { id: 'les-1-2-3', sectionId: 'sec-1-2', title: 'Weekly Observances', description: 'Special practices for ekadashi and other weekly observances.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 3 },
+  { id: 'les-1-2-1', sectionId: 'sec-1-2', title: 'Morning Routine & Puja', description: 'Establishing a consistent daily spiritual routine.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
+  { id: 'les-1-2-2', sectionId: 'sec-1-2', title: 'Evening Reflection', description: 'Practices for end-of-day spiritual reflection.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-1-2-3', sectionId: 'sec-1-2', title: 'Weekly Observances', description: 'Special practices for ekadashi and other weekly observances.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 3 },
   // Course 1, Section 3
-  { id: 'les-1-3-1', sectionId: 'sec-1-3', title: 'Understanding Akshar-Purushottam', description: 'Core theological principles explained.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 25, sortOrder: 1 },
-  { id: 'les-1-3-2', sectionId: 'sec-1-3', title: 'Living with Purpose', description: 'Applying spiritual principles in daily life.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
+  { id: 'les-1-3-1', sectionId: 'sec-1-3', title: 'Understanding Akshar-Purushottam', description: 'Core theological principles explained.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 25, sortOrder: 1 },
+  { id: 'les-1-3-2', sectionId: 'sec-1-3', title: 'Living with Purpose', description: 'Applying spiritual principles in daily life.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
   // Course 2, Section 1
-  { id: 'les-2-1-1', sectionId: 'sec-2-1', title: 'What Makes a Great Leader', description: 'Qualities of effective spiritual leadership.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
-  { id: 'les-2-1-2', sectionId: 'sec-2-1', title: 'Leading by Example', description: 'How personal conduct shapes leadership effectiveness.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
+  { id: 'les-2-1-1', sectionId: 'sec-2-1', title: 'What Makes a Great Leader', description: 'Qualities of effective spiritual leadership.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
+  { id: 'les-2-1-2', sectionId: 'sec-2-1', title: 'Leading by Example', description: 'How personal conduct shapes leadership effectiveness.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
   // Course 2, Section 2
-  { id: 'les-2-2-1', sectionId: 'sec-2-2', title: 'Delegation & Empowerment', description: 'Empowering team members through effective delegation.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
-  { id: 'les-2-2-2', sectionId: 'sec-2-2', title: 'Conflict Resolution', description: 'Handling disagreements with grace and wisdom.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
+  { id: 'les-2-2-1', sectionId: 'sec-2-2', title: 'Delegation & Empowerment', description: 'Empowering team members through effective delegation.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
+  { id: 'les-2-2-2', sectionId: 'sec-2-2', title: 'Conflict Resolution', description: 'Handling disagreements with grace and wisdom.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
   // Course 3, Section 1
-  { id: 'les-3-1-1', sectionId: 'sec-3-1', title: 'Topic Selection Framework', description: 'How to choose relevant and engaging sabha topics.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
-  { id: 'les-3-1-2', sectionId: 'sec-3-1', title: 'Structuring Content', description: 'Building a logical flow for your presentation.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-3-1-1', sectionId: 'sec-3-1', title: 'Topic Selection Framework', description: 'How to choose relevant and engaging sabha topics.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
+  { id: 'les-3-1-2', sectionId: 'sec-3-1', title: 'Structuring Content', description: 'Building a logical flow for your presentation.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
   // Course 3, Section 2
-  { id: 'les-3-2-1', sectionId: 'sec-3-2', title: 'Engaging Your Audience', description: 'Interactive techniques to keep attendees involved.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
-  { id: 'les-3-2-2', sectionId: 'sec-3-2', title: 'Using Multimedia Effectively', description: 'Best practices for slides, videos, and visuals.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-3-2-1', sectionId: 'sec-3-2', title: 'Engaging Your Audience', description: 'Interactive techniques to keep attendees involved.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
+  { id: 'les-3-2-2', sectionId: 'sec-3-2', title: 'Using Multimedia Effectively', description: 'Best practices for slides, videos, and visuals.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
   // Course 4, Section 1
-  { id: 'les-4-1-1', sectionId: 'sec-4-1', title: 'First Impressions Matter', description: 'Building initial rapport with mentees.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
-  { id: 'les-4-1-2', sectionId: 'sec-4-1', title: 'Active Listening Skills', description: 'Techniques for truly hearing and understanding youth.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
+  { id: 'les-4-1-1', sectionId: 'sec-4-1', title: 'First Impressions Matter', description: 'Building initial rapport with mentees.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 1 },
+  { id: 'les-4-1-2', sectionId: 'sec-4-1', title: 'Active Listening Skills', description: 'Techniques for truly hearing and understanding youth.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
   // Course 4, Section 2
-  { id: 'les-4-2-1', sectionId: 'sec-4-2', title: 'Setting Spiritual Goals', description: 'Helping mentees define meaningful goals.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
-  { id: 'les-4-2-2', sectionId: 'sec-4-2', title: 'Tracking Progress', description: 'Methods for monitoring and celebrating growth.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-4-2-1', sectionId: 'sec-4-2', title: 'Setting Spiritual Goals', description: 'Helping mentees define meaningful goals.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 1 },
+  { id: 'les-4-2-2', sectionId: 'sec-4-2', title: 'Tracking Progress', description: 'Methods for monitoring and celebrating growth.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
   // Course 5, Section 1
-  { id: 'les-5-1-1', sectionId: 'sec-5-1', title: 'GA Admin Walkthrough', description: 'Complete tour of the GA Admin platform features.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 30, sortOrder: 1 },
-  { id: 'les-5-1-2', sectionId: 'sec-5-1', title: 'Tips & Tricks', description: 'Power user tips for maximizing efficiency.', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
+  { id: 'les-5-1-1', sectionId: 'sec-5-1', title: 'GA Admin Walkthrough', description: 'Complete tour of the GA Admin platform features.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 30, sortOrder: 1 },
+  { id: 'les-5-1-2', sectionId: 'sec-5-1', title: 'Tips & Tricks', description: 'Power user tips for maximizing efficiency.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 20, sortOrder: 2 },
 ];
