@@ -21,14 +21,28 @@ export interface Section {
   sortOrder: number;
 }
 
+export interface QuizOption {
+  id: string;
+  text: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: QuizOption[];
+  correctOptionId: string;
+}
+
 export interface Lesson {
   id: string;
   sectionId: string;
   title: string;
   description: string;
+  type: 'video' | 'quiz';
   videoUrl: string;
   durationMinutes: number;
   sortOrder: number;
+  quizQuestions?: QuizQuestion[];
 }
 
 export interface UserProgress {

@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   ArrowLeft, Play, Lock, CheckCircle2, Circle, ChevronDown,
-  Clock, BookOpen, User,
+  Clock, BookOpen, User, HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SectionWithLessons, LessonWithStatus } from '@/types/lms';
@@ -165,12 +165,18 @@ function LessonRow({
 }) {
   const isClickable = enrolled && (lesson.status === 'available' || lesson.status === 'in-progress' || lesson.status === 'completed');
 
-  const icon = {
-    locked: <Lock className="w-4 h-4 text-muted-foreground" />,
-    available: <Circle className="w-4 h-4 text-primary" />,
-    'in-progress': <Play className="w-4 h-4 text-primary" />,
-    completed: <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />,
-  }[lesson.status];
+  const icon = lesson.type === 'quiz'
+    ? lesson.status === 'completed'
+      ? <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />
+      : lesson.status === 'locked'
+        ? <Lock className="w-4 h-4 text-muted-foreground" />
+        : <HelpCircle className="w-4 h-4 text-primary" />
+    : {
+        locked: <Lock className="w-4 h-4 text-muted-foreground" />,
+        available: <Circle className="w-4 h-4 text-primary" />,
+        'in-progress': <Play className="w-4 h-4 text-primary" />,
+        completed: <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />,
+      }[lesson.status];
 
   const content = (
     <div
@@ -190,9 +196,15 @@ function LessonRow({
           <Progress value={lesson.progress} className="h-1 mt-1.5 w-32" />
         )}
       </div>
-      <span className="text-xs text-muted-foreground flex items-center gap-1">
-        <Clock className="w-3 h-3" /> {lesson.durationMinutes}m
-      </span>
+      {lesson.type === 'quiz' ? (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <HelpCircle className="w-3 h-3" /> Quiz
+        </span>
+      ) : (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <Clock className="w-3 h-3" /> {lesson.durationMinutes}m
+        </span>
+      )}
     </div>
   );
 
