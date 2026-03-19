@@ -196,9 +196,15 @@ function LessonRow({
           <Progress value={lesson.progress} className="h-1 mt-1.5 w-32" />
         )}
       </div>
-      <span className="text-xs text-muted-foreground flex items-center gap-1">
-        <Clock className="w-3 h-3" /> {lesson.durationMinutes}m
-      </span>
+      {lesson.type === 'quiz' ? (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <HelpCircle className="w-3 h-3" /> Quiz
+        </span>
+      ) : (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <Clock className="w-3 h-3" /> {lesson.durationMinutes}m
+        </span>
+      )}
     </div>
   );
 
