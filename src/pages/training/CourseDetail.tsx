@@ -165,12 +165,18 @@ function LessonRow({
 }) {
   const isClickable = enrolled && (lesson.status === 'available' || lesson.status === 'in-progress' || lesson.status === 'completed');
 
-  const icon = {
-    locked: <Lock className="w-4 h-4 text-muted-foreground" />,
-    available: <Circle className="w-4 h-4 text-primary" />,
-    'in-progress': <Play className="w-4 h-4 text-primary" />,
-    completed: <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />,
-  }[lesson.status];
+  const icon = lesson.type === 'quiz'
+    ? lesson.status === 'completed'
+      ? <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />
+      : lesson.status === 'locked'
+        ? <Lock className="w-4 h-4 text-muted-foreground" />
+        : <HelpCircle className="w-4 h-4 text-primary" />
+    : {
+        locked: <Lock className="w-4 h-4 text-muted-foreground" />,
+        available: <Circle className="w-4 h-4 text-primary" />,
+        'in-progress': <Play className="w-4 h-4 text-primary" />,
+        completed: <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />,
+      }[lesson.status];
 
   const content = (
     <div
