@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   ArrowLeft, Play, Lock, CheckCircle2, Circle, ChevronDown,
-  Clock, BookOpen, User,
+  Clock, BookOpen, User, HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SectionWithLessons, LessonWithStatus } from '@/types/lms';
