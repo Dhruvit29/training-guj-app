@@ -184,7 +184,7 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
         onEnded={() => {
           setIsPlaying(false);
           // Only mark complete on video end if configured duration threshold is met
-          if (maxWatchedRef.current >= durationMinutes * 60 * 0.95) {
+          if (maxWatchedRef.current >= durationMinutes * 60 * 0.90) {
             onComplete();
           }
         }}
