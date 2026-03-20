@@ -73,16 +73,11 @@ const AdminCourses: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-full bg-background">
       <div className="border-b bg-card">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/training')} className="gap-2 -ml-2">
-                <ArrowLeft className="w-4 h-4" /> Back
-              </Button>
-              <h1 className="text-xl font-bold text-foreground">Course Management</h1>
-            </div>
+            <h1 className="text-xl font-bold text-foreground">Course Management</h1>
             <Button onClick={openNew} className="gap-2">
               <Plus className="w-4 h-4" /> New Course
             </Button>

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Clock, BookOpen, Play, Settings } from 'lucide-react';
+import { Search, Clock, BookOpen, Play } from 'lucide-react';
 import type { CourseWithProgress } from '@/types/lms';
 
 const CourseCatalog: React.FC = () => {
