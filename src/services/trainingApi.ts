@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------
 
 const USE_MOCK = true; // Set to false when backend is ready
-const API_BASE_URL = '/api/training'; // Adjust to your Spring Boot base URL
+const API_BASE_URL = '/ga-admin/api/training'; // Matches gc-ui Spring Boot base path
 
 interface ProgressPayload {
   lessonId: string;

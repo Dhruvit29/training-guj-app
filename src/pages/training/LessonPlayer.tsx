@@ -47,7 +47,7 @@ const LessonPlayer: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+    <div className="min-h-full bg-background flex flex-col lg:flex-row">
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}

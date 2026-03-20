@@ -5,25 +5,25 @@
 @layer base {
   :root {
     --background: 210 20% 98%;
-    --foreground: 220 25% 10%;
+    --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 217 91% 50%;
+    --primary: 215 50% 23%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 20% 94%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary-foreground: 215 25% 15%;
 
     --muted: 210 20% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 45 93% 58%;
-    --accent-foreground: 220 25% 10%;
+    --accent: 217 91% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -32,21 +32,24 @@
     --input: 214 32% 91%;
     --ring: 217 91% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 210 20% 90%;
+    --sidebar-background: 215 50% 20%;
+    --sidebar-foreground: 210 20% 95%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 16%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 20% 18%;
+    --sidebar-accent: 215 45% 26%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 215 40% 28%;
     --sidebar-ring: 217 91% 60%;
 
     --success: 152 69% 40%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+
+    --nav-dark: 215 50% 23%;
+    --nav-dark-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -59,7 +62,7 @@
     --popover: 220 25% 9%;
     --popover-foreground: 210 20% 96%;
 
-    --primary: 217 91% 60%;
+    --primary: 215 50% 30%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 20% 16%;
@@ -68,8 +71,8 @@
     --muted: 220 20% 14%;
     --muted-foreground: 215 16% 55%;
 
-    --accent: 45 93% 58%;
-    --accent-foreground: 220 25% 10%;
+    --accent: 217 91% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 20% 96%;
@@ -91,6 +94,9 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+
+    --nav-dark: 215 50% 15%;
+    --nav-dark-foreground: 0 0% 100%;
   }
 }
 
