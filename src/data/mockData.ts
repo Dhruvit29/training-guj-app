@@ -78,8 +78,8 @@ export const mockSections: Section[] = [
 
 export const mockLessons: Lesson[] = [
   // Course 1, Section 1
-  { id: 'les-1-1-1', sectionId: 'sec-1-1', title: 'Welcome & Course Overview', description: 'Introduction to the course structure and objectives.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 10, sortOrder: 1 },
-  { id: 'les-1-1-2', sectionId: 'sec-1-1', title: 'Historical Context', description: 'Understanding the historical significance and origin.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 15, sortOrder: 2 },
+  { id: 'les-1-1-1', sectionId: 'sec-1-1', title: 'Welcome & Course Overview', description: 'Introduction to the course structure and objectives.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 0.17, sortOrder: 1 },
+  { id: 'les-1-1-2', sectionId: 'sec-1-1', title: 'Historical Context', description: 'Understanding the historical significance and origin.', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 0.17, sortOrder: 2 },
   // Course 1, Section 1 — Quiz
   { id: 'les-1-1-3', sectionId: 'sec-1-1', title: 'Section 1 Quiz', description: 'Test your understanding of the introduction.', type: 'quiz', videoUrl: '', durationMinutes: 5, sortOrder: 3, quizQuestions: [
     { id: 'q1', question: 'What is the primary purpose of this course?', options: [
