@@ -54,10 +54,9 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
 
     onProgress(maxWatchedRef.current);
 
-    // Check completion (95% threshold) — always use configured durationMinutes
-    // to avoid premature completion when video file is shorter than configured length
+    // Check completion (90% threshold) — uses admin-configured durationMinutes
     const totalDuration = durationMinutes * 60;
-    if (totalDuration > 0 && maxWatchedRef.current >= totalDuration * 0.95) {
+    if (totalDuration > 0 && maxWatchedRef.current >= totalDuration * 0.90) {
       onComplete();
     }
   }, [durationMinutes, onProgress, onComplete]);
@@ -185,7 +184,7 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
         onEnded={() => {
           setIsPlaying(false);
           // Only mark complete on video end if configured duration threshold is met
-          if (maxWatchedRef.current >= durationMinutes * 60 * 0.95) {
+          if (maxWatchedRef.current >= durationMinutes * 60 * 0.90) {
             onComplete();
           }
         }}
