@@ -30,19 +30,15 @@ const CourseCatalog: React.FC = () => {
   const available = filtered.filter(c => !c.enrolled);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero header */}
-      <div className="bg-primary/5 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between mb-6">
+    <div className="min-h-full bg-background">
+      {/* Search & filter bar */}
+      <div className="bg-card border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">Training Center</h1>
-              <p className="text-muted-foreground mt-1">Grow your skills with guided video courses</p>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">Training Center</h1>
+              <p className="text-sm text-muted-foreground mt-0.5">Grow your skills with guided video courses</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => navigate('/training/admin')} className="gap-2">
-              <Settings className="w-4 h-4" />
-              Admin
-            </Button>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
