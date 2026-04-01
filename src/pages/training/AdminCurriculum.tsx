@@ -1,25 +1,38 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLms } from '@/contexts/LmsContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from '@/components/ui/dialog';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
-import {
-  ArrowLeft, Plus, Pencil, Trash2, ChevronDown,
-  ArrowUp, ArrowDown, Video, HelpCircle, CheckCircle2,
-} from 'lucide-react';
-import type { Section, Lesson, QuizQuestion, QuizOption } from '@/types/lms';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import QuizIcon from '@mui/icons-material/Quiz';
+import Title from '@/common/components/Title';
+import GcPageContainer from '@/common/components/GcPageContainer';
+import type { Section, Lesson, QuizQuestion } from '@/types/lms';
 
 const AdminCurriculum: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -27,9 +40,7 @@ const AdminCurriculum: React.FC = () => {
   const { state, dispatch } = useLms();
 
   const course = state.courses.find(c => c.id === courseId);
-  const sections = state.sections
-    .filter(s => s.courseId === courseId)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+  const sections = state.sections.filter(s => s.courseId === courseId).sort((a, b) => a.sortOrder - b.sortOrder);
 
   const [sectionDialog, setSectionDialog] = useState(false);
   const [editSection, setEditSection] = useState<Section | null>(null);
@@ -39,27 +50,18 @@ const AdminCurriculum: React.FC = () => {
   const [editLesson, setEditLesson] = useState<Lesson | null>(null);
   const [lessonSectionId, setLessonSectionId] = useState('');
   const [lessonForm, setLessonForm] = useState<{
-    title: string;
-    description: string;
-    type: 'video' | 'quiz';
-    videoUrl: string;
-    durationMinutes: number;
-    quizQuestions: QuizQuestion[];
-  }>({
-    title: '', description: '', type: 'video',
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    durationMinutes: 10, quizQuestions: [],
-  });
+    title: string; description: string; type: 'video' | 'quiz';
+    videoUrl: string; durationMinutes: number; quizQuestions: QuizQuestion[];
+  }>({ title: '', description: '', type: 'video', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', durationMinutes: 10, quizQuestions: [] });
 
   if (!course) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-muted-foreground">Course not found</p>
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <Typography color="text.secondary">Course not found</Typography>
+      </Box>
     );
   }
 
-  // --- Section handlers ---
   const openNewSection = () => { setEditSection(null); setSectionTitle(''); setSectionDialog(true); };
   const openEditSection = (sec: Section) => { setEditSection(sec); setSectionTitle(sec.title); setSectionDialog(true); };
   const saveSection = () => {
@@ -72,7 +74,6 @@ const AdminCurriculum: React.FC = () => {
     setSectionDialog(false);
   };
 
-  // --- Lesson handlers ---
   const openNewLesson = (sectionId: string) => {
     setEditLesson(null);
     setLessonSectionId(sectionId);
@@ -83,12 +84,7 @@ const AdminCurriculum: React.FC = () => {
   const openEditLesson = (lesson: Lesson) => {
     setEditLesson(lesson);
     setLessonSectionId(lesson.sectionId);
-    setLessonForm({
-      title: lesson.title, description: lesson.description,
-      type: lesson.type, videoUrl: lesson.videoUrl,
-      durationMinutes: lesson.durationMinutes,
-      quizQuestions: lesson.quizQuestions ?? [],
-    });
+    setLessonForm({ title: lesson.title, description: lesson.description, type: lesson.type, videoUrl: lesson.videoUrl, durationMinutes: lesson.durationMinutes, quizQuestions: lesson.quizQuestions ?? [] });
     setLessonDialog(true);
   };
 
@@ -96,15 +92,11 @@ const AdminCurriculum: React.FC = () => {
     if (!lessonForm.title.trim()) return;
     const sectionLessons = state.lessons.filter(l => l.sectionId === lessonSectionId);
     const lessonData: Omit<Lesson, 'id' | 'sortOrder'> = {
-      sectionId: lessonSectionId,
-      title: lessonForm.title,
-      description: lessonForm.description,
-      type: lessonForm.type,
-      videoUrl: lessonForm.type === 'video' ? lessonForm.videoUrl : '',
+      sectionId: lessonSectionId, title: lessonForm.title, description: lessonForm.description,
+      type: lessonForm.type, videoUrl: lessonForm.type === 'video' ? lessonForm.videoUrl : '',
       durationMinutes: lessonForm.durationMinutes,
       ...(lessonForm.type === 'quiz' ? { quizQuestions: lessonForm.quizQuestions } : {}),
     };
-
     if (editLesson) {
       dispatch({ type: 'UPDATE_LESSON', lesson: { ...editLesson, ...lessonData } });
     } else {
@@ -113,27 +105,15 @@ const AdminCurriculum: React.FC = () => {
     setLessonDialog(false);
   };
 
-  // --- Quiz question helpers ---
   const addQuestion = () => {
     const qId = `q-${Date.now()}`;
     setLessonForm(f => ({
-      ...f,
-      quizQuestions: [...f.quizQuestions, {
-        id: qId, question: '',
-        options: [
-          { id: `${qId}-a`, text: '' },
-          { id: `${qId}-b`, text: '' },
-        ],
-        correctOptionId: '',
-      }],
+      ...f, quizQuestions: [...f.quizQuestions, { id: qId, question: '', options: [{ id: `${qId}-a`, text: '' }, { id: `${qId}-b`, text: '' }], correctOptionId: '' }],
     }));
   };
 
   const updateQuestion = (qIdx: number, field: string, value: string) => {
-    setLessonForm(f => ({
-      ...f,
-      quizQuestions: f.quizQuestions.map((q, i) => i === qIdx ? { ...q, [field]: value } : q),
-    }));
+    setLessonForm(f => ({ ...f, quizQuestions: f.quizQuestions.map((q, i) => i === qIdx ? { ...q, [field]: value } : q) }));
   };
 
   const removeQuestion = (qIdx: number) => {
@@ -142,42 +122,32 @@ const AdminCurriculum: React.FC = () => {
 
   const addOption = (qIdx: number) => {
     setLessonForm(f => ({
-      ...f,
-      quizQuestions: f.quizQuestions.map((q, i) => i === qIdx
-        ? { ...q, options: [...q.options, { id: `${q.id}-${String.fromCharCode(97 + q.options.length)}`, text: '' }] }
-        : q),
+      ...f, quizQuestions: f.quizQuestions.map((q, i) => i === qIdx
+        ? { ...q, options: [...q.options, { id: `${q.id}-${String.fromCharCode(97 + q.options.length)}`, text: '' }] } : q),
     }));
   };
 
   const updateOption = (qIdx: number, oIdx: number, text: string) => {
     setLessonForm(f => ({
-      ...f,
-      quizQuestions: f.quizQuestions.map((q, i) => i === qIdx
-        ? { ...q, options: q.options.map((o, j) => j === oIdx ? { ...o, text } : o) }
-        : q),
+      ...f, quizQuestions: f.quizQuestions.map((q, i) => i === qIdx
+        ? { ...q, options: q.options.map((o, j) => j === oIdx ? { ...o, text } : o) } : q),
     }));
   };
 
   const removeOption = (qIdx: number, oIdx: number) => {
     setLessonForm(f => ({
-      ...f,
-      quizQuestions: f.quizQuestions.map((q, i) => {
+      ...f, quizQuestions: f.quizQuestions.map((q, i) => {
         if (i !== qIdx) return q;
         const newOptions = q.options.filter((_, j) => j !== oIdx);
-        const correctStillExists = newOptions.some(o => o.id === q.correctOptionId);
-        return { ...q, options: newOptions, correctOptionId: correctStillExists ? q.correctOptionId : '' };
+        return { ...q, options: newOptions, correctOptionId: newOptions.some(o => o.id === q.correctOptionId) ? q.correctOptionId : '' };
       }),
     }));
   };
 
   const setCorrectOption = (qIdx: number, optionId: string) => {
-    setLessonForm(f => ({
-      ...f,
-      quizQuestions: f.quizQuestions.map((q, i) => i === qIdx ? { ...q, correctOptionId: optionId } : q),
-    }));
+    setLessonForm(f => ({ ...f, quizQuestions: f.quizQuestions.map((q, i) => i === qIdx ? { ...q, correctOptionId: optionId } : q) }));
   };
 
-  // --- Reorder ---
   const moveSection = (sec: Section, direction: 'up' | 'down') => {
     const ids = sections.map(s => s.id);
     const idx = ids.indexOf(sec.id);
@@ -201,216 +171,171 @@ const AdminCurriculum: React.FC = () => {
   );
 
   return (
-    <div className="min-h-full bg-background">
-      <div className="border-b bg-card">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/training/admin')} className="gap-2 -ml-2">
-                <ArrowLeft className="w-4 h-4" /> Back
-              </Button>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">{course.title}</h1>
-                <p className="text-xs text-muted-foreground">Curriculum Builder</p>
-              </div>
-            </div>
-            <Button onClick={openNewSection} className="gap-2"><Plus className="w-4 h-4" /> Add Section</Button>
-          </div>
-        </div>
-      </div>
+    <>
+      <Box sx={{ px: { xs: 2, sm: 3 }, pt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/training/admin')} size="small">Back</Button>
+          <Box>
+            <Title titleHeader={course.title} />
+            <Typography variant="caption" color="text.secondary">Curriculum Builder</Typography>
+          </Box>
+        </Box>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={openNewSection} size="small">Add Section</Button>
+      </Box>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+      <GcPageContainer noPaper>
         {sections.map((section, sIdx) => {
           const sectionLessons = state.lessons.filter(l => l.sectionId === section.id).sort((a, b) => a.sortOrder - b.sortOrder);
           return (
-            <Collapsible key={section.id} defaultOpen>
-              <Card>
-                <CollapsibleTrigger className="w-full">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col gap-0.5">
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={e => { e.stopPropagation(); moveSection(section, 'up'); }} disabled={sIdx === 0}><ArrowUp className="w-3 h-3" /></Button>
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={e => { e.stopPropagation(); moveSection(section, 'down'); }} disabled={sIdx === sections.length - 1}><ArrowDown className="w-3 h-3" /></Button>
-                      </div>
-                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                      <div className="flex-1 text-left">
-                        <p className="font-medium text-foreground">Section {sIdx + 1}: {section.title}</p>
-                        <p className="text-xs text-muted-foreground">{sectionLessons.length} lessons</p>
-                      </div>
-                      <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditSection(section)}><Pencil className="w-3.5 h-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => dispatch({ type: 'DELETE_SECTION', sectionId: section.id })}><Trash2 className="w-3.5 h-3.5" /></Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="px-4 pb-4 space-y-2">
-                    {sectionLessons.map((lesson, lIdx) => (
-                      <div key={lesson.id} className="flex items-center gap-2 p-3 bg-muted/30 rounded-md">
-                        <div className="flex flex-col gap-0.5">
-                          <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => moveLesson(lesson, 'up')} disabled={lIdx === 0}><ArrowUp className="w-2.5 h-2.5" /></Button>
-                          <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => moveLesson(lesson, 'down')} disabled={lIdx === sectionLessons.length - 1}><ArrowDown className="w-2.5 h-2.5" /></Button>
-                        </div>
-                        {lesson.type === 'quiz' ? <HelpCircle className="w-4 h-4 text-primary" /> : <Video className="w-4 h-4 text-muted-foreground" />}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-foreground truncate">{lesson.title}</p>
-                            {lesson.type === 'quiz' && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Quiz</Badge>}
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {lesson.type === 'quiz' ? `${lesson.quizQuestions?.length ?? 0} questions` : `${lesson.durationMinutes} min`}
-                          </p>
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditLesson(lesson)}><Pencil className="w-3 h-3" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => dispatch({ type: 'DELETE_LESSON', lessonId: lesson.id })}><Trash2 className="w-3 h-3" /></Button>
-                      </div>
-                    ))}
-                    <Button variant="outline" size="sm" className="w-full gap-2 mt-2" onClick={() => openNewLesson(section.id)}>
-                      <Plus className="w-3.5 h-3.5" /> Add Lesson
-                    </Button>
-                  </div>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
+            <Accordion key={section.id} defaultExpanded sx={{ mb: 1, '&:before': { display: 'none' } }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <IconButton size="small" disabled={sIdx === 0} onClick={e => { e.stopPropagation(); moveSection(section, 'up'); }}><ArrowUpwardIcon sx={{ fontSize: 14 }} /></IconButton>
+                    <IconButton size="small" disabled={sIdx === sections.length - 1} onClick={e => { e.stopPropagation(); moveSection(section, 'down'); }}><ArrowDownwardIcon sx={{ fontSize: 14 }} /></IconButton>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" fontWeight={600}>Section {sIdx + 1}: {section.title}</Typography>
+                    <Typography variant="caption" color="text.secondary">{sectionLessons.length} lessons</Typography>
+                  </Box>
+                  <Box onClick={e => e.stopPropagation()} sx={{ display: 'flex', gap: 0.5 }}>
+                    <IconButton size="small" onClick={() => openEditSection(section)}><EditIcon sx={{ fontSize: 16 }} /></IconButton>
+                    <IconButton size="small" color="error" onClick={() => dispatch({ type: 'DELETE_SECTION', sectionId: section.id })}><DeleteIcon sx={{ fontSize: 16 }} /></IconButton>
+                  </Box>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails sx={{ pt: 0 }}>
+                {sectionLessons.map((lesson, lIdx) => (
+                  <Box key={lesson.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1.5, mb: 0.5, bgcolor: 'action.hover', borderRadius: 1 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <IconButton size="small" disabled={lIdx === 0} onClick={() => moveLesson(lesson, 'up')}><ArrowUpwardIcon sx={{ fontSize: 12 }} /></IconButton>
+                      <IconButton size="small" disabled={lIdx === sectionLessons.length - 1} onClick={() => moveLesson(lesson, 'down')}><ArrowDownwardIcon sx={{ fontSize: 12 }} /></IconButton>
+                    </Box>
+                    {lesson.type === 'quiz' ? <QuizIcon color="primary" fontSize="small" /> : <VideocamIcon fontSize="small" color="action" />}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" fontWeight={500} noWrap>{lesson.title}</Typography>
+                        {lesson.type === 'quiz' && <Chip label="Quiz" size="small" variant="outlined" sx={{ height: 18, fontSize: '0.65rem' }} />}
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {lesson.type === 'quiz' ? `${lesson.quizQuestions?.length ?? 0} questions` : `${lesson.durationMinutes} min`}
+                      </Typography>
+                    </Box>
+                    <IconButton size="small" onClick={() => openEditLesson(lesson)}><EditIcon sx={{ fontSize: 14 }} /></IconButton>
+                    <IconButton size="small" color="error" onClick={() => dispatch({ type: 'DELETE_LESSON', lessonId: lesson.id })}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
+                  </Box>
+                ))}
+                <Button variant="outlined" size="small" fullWidth startIcon={<AddIcon />} onClick={() => openNewLesson(section.id)} sx={{ mt: 1 }}>
+                  Add Lesson
+                </Button>
+              </AccordionDetails>
+            </Accordion>
           );
         })}
 
         {sections.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground mb-4">No sections yet. Add your first section to start building the curriculum.</p>
-            <Button onClick={openNewSection} className="gap-2"><Plus className="w-4 h-4" /> Add Section</Button>
-          </div>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography color="text.secondary" gutterBottom>No sections yet. Add your first section to start building the curriculum.</Typography>
+            <Button variant="contained" startIcon={<AddIcon />} onClick={openNewSection} sx={{ mt: 2 }}>Add Section</Button>
+          </Box>
         )}
-      </div>
+      </GcPageContainer>
 
-      {/* Section dialog */}
-      <Dialog open={sectionDialog} onOpenChange={setSectionDialog}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>{editSection ? 'Edit Section' : 'New Section'}</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            <Label>Title</Label>
-            <Input value={sectionTitle} onChange={e => setSectionTitle(e.target.value)} placeholder="e.g., Introduction" />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSectionDialog(false)}>Cancel</Button>
-            <Button onClick={saveSection} disabled={!sectionTitle.trim()}>Save</Button>
-          </DialogFooter>
+      {/* Section Dialog */}
+      <Dialog open={sectionDialog} onClose={() => setSectionDialog(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>{editSection ? 'Edit Section' : 'New Section'}</DialogTitle>
+        <DialogContent sx={{ pt: '16px !important' }}>
+          <TextField label="Title" size="small" fullWidth value={sectionTitle} onChange={e => setSectionTitle(e.target.value)} placeholder="e.g., Introduction" />
         </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSectionDialog(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveSection} disabled={!sectionTitle.trim()}>Save</Button>
+        </DialogActions>
       </Dialog>
 
-      {/* Lesson dialog */}
-      <Dialog open={lessonDialog} onOpenChange={setLessonDialog}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editLesson ? 'Edit Lesson' : 'New Lesson'}</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Lesson Type</Label>
-              <Select value={lessonForm.type} onValueChange={(v: 'video' | 'quiz') => setLessonForm(f => ({ ...f, type: v }))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="video"><span className="flex items-center gap-2"><Video className="w-4 h-4" /> Video</span></SelectItem>
-                  <SelectItem value="quiz"><span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" /> Quiz</span></SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input value={lessonForm.title} onChange={e => setLessonForm(f => ({ ...f, title: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea value={lessonForm.description} onChange={e => setLessonForm(f => ({ ...f, description: e.target.value }))} rows={2} />
-            </div>
+      {/* Lesson Dialog */}
+      <Dialog open={lessonDialog} onClose={() => setLessonDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle>{editLesson ? 'Edit Lesson' : 'New Lesson'}</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Lesson Type</InputLabel>
+            <Select label="Lesson Type" value={lessonForm.type} onChange={e => setLessonForm(f => ({ ...f, type: e.target.value as 'video' | 'quiz' }))}>
+              <MenuItem value="video"><Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}><VideocamIcon fontSize="small" /> Video</Box></MenuItem>
+              <MenuItem value="quiz"><Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}><QuizIcon fontSize="small" /> Quiz</Box></MenuItem>
+            </Select>
+          </FormControl>
+          <TextField label="Title" size="small" fullWidth value={lessonForm.title} onChange={e => setLessonForm(f => ({ ...f, title: e.target.value }))} />
+          <TextField label="Description" size="small" fullWidth multiline rows={2} value={lessonForm.description} onChange={e => setLessonForm(f => ({ ...f, description: e.target.value }))} />
 
-            {lessonForm.type === 'video' ? (
-              <>
-                <div className="space-y-2">
-                  <Label>Video URL</Label>
-                  <Input value={lessonForm.videoUrl} onChange={e => setLessonForm(f => ({ ...f, videoUrl: e.target.value }))} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Duration (minutes)</Label>
-                  <Input type="number" value={lessonForm.durationMinutes} onChange={e => setLessonForm(f => ({ ...f, durationMinutes: parseInt(e.target.value) || 0 }))} />
-                </div>
-              </>
-            ) : (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-base font-semibold">Quiz Questions</Label>
-                  <Button variant="outline" size="sm" onClick={addQuestion} className="gap-1">
-                    <Plus className="w-3.5 h-3.5" /> Add Question
-                  </Button>
-                </div>
+          {lessonForm.type === 'video' ? (
+            <>
+              <TextField label="Video URL" size="small" fullWidth value={lessonForm.videoUrl} onChange={e => setLessonForm(f => ({ ...f, videoUrl: e.target.value }))} />
+              <TextField label="Duration (minutes)" size="small" type="number" fullWidth value={lessonForm.durationMinutes} onChange={e => setLessonForm(f => ({ ...f, durationMinutes: parseInt(e.target.value) || 0 }))} />
+            </>
+          ) : (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="subtitle2" fontWeight={600}>Quiz Questions</Typography>
+                <Button variant="outlined" size="small" startIcon={<AddIcon />} onClick={addQuestion}>Add Question</Button>
+              </Box>
 
-                {lessonForm.quizQuestions.map((q, qIdx) => (
-                  <Card key={q.id} className="border-dashed">
-                    <CardContent className="p-4 space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 space-y-2">
-                          <Label className="text-xs text-muted-foreground">Question {qIdx + 1}</Label>
-                          <Input
-                            value={q.question}
-                            onChange={e => updateQuestion(qIdx, 'question', e.target.value)}
-                            placeholder="Enter your question..."
-                          />
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0 mt-5" onClick={() => removeQuestion(qIdx)}>
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
+              {lessonForm.quizQuestions.map((q, qIdx) => (
+                <Card key={q.id} variant="outlined" sx={{ mb: 2, borderStyle: 'dashed' }}>
+                  <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 1.5 }}>
+                      <TextField
+                        label={`Question ${qIdx + 1}`}
+                        size="small"
+                        fullWidth
+                        value={q.question}
+                        onChange={e => updateQuestion(qIdx, 'question', e.target.value)}
+                        placeholder="Enter your question..."
+                      />
+                      <IconButton size="small" color="error" onClick={() => removeQuestion(qIdx)}><DeleteIcon fontSize="small" /></IconButton>
+                    </Box>
 
-                      <div className="space-y-2">
-                        <Label className="text-xs text-muted-foreground">Options (select the correct answer)</Label>
-                        {q.options.map((opt, oIdx) => (
-                          <div key={opt.id} className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setCorrectOption(qIdx, opt.id)}
-                              className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                q.correctOptionId === opt.id
-                                  ? 'border-[hsl(var(--success))] bg-[hsl(var(--success))]'
-                                  : 'border-muted-foreground/30 hover:border-primary'
-                              }`}
-                            >
-                              {q.correctOptionId === opt.id && <CheckCircle2 className="w-3 h-3 text-[hsl(var(--success-foreground))]" />}
-                            </button>
-                            <Input
-                              value={opt.text}
-                              onChange={e => updateOption(qIdx, oIdx, e.target.value)}
-                              placeholder={`Option ${String.fromCharCode(65 + oIdx)}`}
-                              className="flex-1"
-                            />
-                            {q.options.length > 2 && (
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0" onClick={() => removeOption(qIdx, oIdx)}>
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                        {q.options.length < 6 && (
-                          <Button variant="ghost" size="sm" onClick={() => addOption(qIdx)} className="gap-1 text-xs">
-                            <Plus className="w-3 h-3" /> Add Option
-                          </Button>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>Options (select the correct answer)</Typography>
+                    {q.options.map((opt, oIdx) => (
+                      <Box key={opt.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                        <Radio
+                          size="small"
+                          checked={q.correctOptionId === opt.id}
+                          onChange={() => setCorrectOption(qIdx, opt.id)}
+                          color="success"
+                        />
+                        <TextField
+                          size="small"
+                          fullWidth
+                          value={opt.text}
+                          onChange={e => updateOption(qIdx, oIdx, e.target.value)}
+                          placeholder={`Option ${String.fromCharCode(65 + oIdx)}`}
+                        />
+                        {q.options.length > 2 && (
+                          <IconButton size="small" color="error" onClick={() => removeOption(qIdx, oIdx)}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
                         )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </Box>
+                    ))}
+                    {q.options.length < 6 && (
+                      <Button size="small" onClick={() => addOption(qIdx)} startIcon={<AddIcon />} sx={{ fontSize: '0.75rem' }}>Add Option</Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
 
-                {lessonForm.quizQuestions.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-4">No questions yet. Click "Add Question" to start.</p>
-                )}
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setLessonDialog(false)}>Cancel</Button>
-            <Button onClick={saveLesson} disabled={!lessonForm.title.trim() || !isQuizValid}>Save</Button>
-          </DialogFooter>
+              {lessonForm.quizQuestions.length === 0 && (
+                <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ py: 3 }}>
+                  No questions yet. Click "Add Question" to start.
+                </Typography>
+              )}
+            </Box>
+          )}
         </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLessonDialog(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveLesson} disabled={!lessonForm.title.trim() || !isQuizValid}>Save</Button>
+        </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 

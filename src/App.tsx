@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import muiTheme from "@/theme/muiTheme";
 import { LmsProvider } from "@/contexts/LmsContext";
 import TrainingLayout from "@/components/layout/TrainingLayout";
 import CourseCatalog from "@/pages/training/CourseCatalog";
@@ -17,9 +17,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
+    <ThemeProvider theme={muiTheme}>
+      <CssBaseline />
       <LmsProvider>
         <BrowserRouter>
           <Routes>
@@ -36,7 +35,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </LmsProvider>
-    </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

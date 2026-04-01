@@ -3,13 +3,24 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLms } from '@/contexts/LmsContext';
 import RestrictedVideoPlayer from '@/components/lms/RestrictedVideoPlayer';
 import QuizPlayer from '@/components/lms/QuizPlayer';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  ArrowLeft, ChevronRight, Lock, CheckCircle2, Circle, Play, Clock, Award, HelpCircle,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import LockIcon from '@mui/icons-material/Lock';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import QuizIcon from '@mui/icons-material/Quiz';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import type { LessonWithStatus } from '@/types/lms';
 
 const LessonPlayer: React.FC = () => {
@@ -37,31 +48,31 @@ const LessonPlayer: React.FC = () => {
 
   if (!course || !currentLesson) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <p className="text-lg text-muted-foreground">Lesson not found</p>
-          <Button variant="link" onClick={() => navigate('/training')}>Back to catalog</Button>
-        </div>
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <Box textAlign="center">
+          <Typography color="text.secondary" gutterBottom>Lesson not found</Typography>
+          <Button onClick={() => navigate('/training')}>Back to catalog</Button>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-full bg-background flex flex-col lg:flex-row">
+    <Box sx={{ display: 'flex', minHeight: 'calc(100vh - 48px)' }}>
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
-        <div className="border-b bg-card px-4 py-2 flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/training/${courseId}`)} className="gap-1 -ml-2">
-            <ArrowLeft className="w-4 h-4" />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
+          <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => navigate(`/training/${courseId}`)}>
+            Back
           </Button>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground truncate">{course.title}</p>
-            <p className="text-xs text-muted-foreground">Lesson {currentIdx + 1} of {allLessons.length}</p>
-          </div>
-        </div>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="body2" fontWeight={600} noWrap>{course.title}</Typography>
+            <Typography variant="caption" color="text.secondary">Lesson {currentIdx + 1} of {allLessons.length}</Typography>
+          </Box>
+        </Box>
 
-        {/* Video player OR Quiz */}
+        {/* Video or Quiz */}
         {currentLesson.type === 'quiz' && currentLesson.quizQuestions ? (
           <QuizPlayer
             questions={currentLesson.quizQuestions}
@@ -69,7 +80,7 @@ const LessonPlayer: React.FC = () => {
             isAlreadyCompleted={isCompleted}
           />
         ) : (
-          <div className="w-full bg-foreground/5">
+          <Box sx={{ bgcolor: '#000' }}>
             <RestrictedVideoPlayer
               videoUrl={currentLesson.videoUrl}
               durationMinutes={currentLesson.durationMinutes}
@@ -77,129 +88,118 @@ const LessonPlayer: React.FC = () => {
               onProgress={handleProgress}
               onComplete={handleComplete}
             />
-          </div>
+          </Box>
         )}
 
         {/* Lesson info */}
-        <div className="p-6 space-y-4 max-w-4xl">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-foreground">{currentLesson.title}</h1>
-            {currentLesson.type === 'quiz' && (
-              <Badge variant="secondary" className="gap-1">
-                <HelpCircle className="w-3 h-3" /> Quiz
-              </Badge>
-            )}
-            {isCompleted && (
-              <Badge className="bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">
-                <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
-              </Badge>
-            )}
-          </div>
-          <p className="text-muted-foreground leading-relaxed">{currentLesson.description}</p>
+        <Box sx={{ p: 3, maxWidth: 900 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+            <Typography variant="h5" fontWeight={700}>{currentLesson.title}</Typography>
+            {currentLesson.type === 'quiz' && <Chip icon={<QuizIcon />} label="Quiz" size="small" variant="outlined" />}
+            {isCompleted && <Chip icon={<CheckCircleIcon />} label="Completed" size="small" color="success" />}
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>{currentLesson.description}</Typography>
 
           {/* Next lesson CTA */}
           {isCompleted && nextLesson && (
-            <div className="flex items-center gap-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">Up Next</p>
-                <p className="text-sm text-muted-foreground">{nextLesson.title}</p>
-              </div>
-              <Button onClick={() => navigate(`/training/${courseId}/${nextLesson.id}`)} className="gap-2">
-                Next Lesson <ChevronRight className="w-4 h-4" />
+            <Paper variant="outlined" sx={{ mt: 3, p: 2, display: 'flex', alignItems: 'center', gap: 2, bgcolor: 'action.hover' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" fontWeight={600}>Up Next</Typography>
+                <Typography variant="body2" color="text.secondary">{nextLesson.title}</Typography>
+              </Box>
+              <Button variant="contained" endIcon={<ChevronRightIcon />} onClick={() => navigate(`/training/${courseId}/${nextLesson.id}`)}>
+                Next Lesson
               </Button>
-            </div>
+            </Paper>
           )}
 
           {isCompleted && !nextLesson && (
-            <div className="p-4 bg-[hsl(var(--success))]/10 rounded-lg border border-[hsl(var(--success))]/20 text-center">
-              <p className="text-lg font-semibold text-foreground">🎉 Course Complete!</p>
-              <p className="text-sm text-muted-foreground mt-1">You've finished all lessons in this course.</p>
-              <div className="flex items-center justify-center gap-3 mt-3">
-                <Button variant="outline" onClick={() => navigate('/training')}>
+            <Paper variant="outlined" sx={{ mt: 3, p: 3, textAlign: 'center', bgcolor: 'success.main', color: '#fff', border: 'none' }}>
+              <Typography variant="h6" fontWeight={600}>🎉 Course Complete!</Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>You've finished all lessons in this course.</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                <Button variant="outlined" onClick={() => navigate('/training')} sx={{ borderColor: '#fff', color: '#fff' }}>
                   Back to Training Center
                 </Button>
-                <Button onClick={() => navigate(`/training/${courseId}/certificate`)} className="gap-2">
-                  <Award className="w-4 h-4" /> View Certificate
+                <Button
+                  variant="contained"
+                  startIcon={<EmojiEventsIcon />}
+                  onClick={() => navigate(`/training/${courseId}/certificate`)}
+                  sx={{ bgcolor: '#fff', color: 'success.main', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
+                >
+                  View Certificate
                 </Button>
-              </div>
-            </div>
+              </Box>
+            </Paper>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      {/* Sidebar curriculum */}
-      <div className="w-full lg:w-80 border-l bg-card hidden lg:flex flex-col">
-        <div className="p-4 border-b">
-          <h3 className="font-semibold text-foreground text-sm">Course Content</h3>
-        </div>
-        <ScrollArea className="flex-1">
-          <div className="p-2">
-            {sections.map((section) => (
-              <div key={section.id} className="mb-3">
-                <p className="text-xs font-semibold text-muted-foreground px-2 py-1.5 uppercase tracking-wider">
-                  {section.title}
-                </p>
-                {section.lessons.map((lesson, lIdx) => (
-                  <SidebarLesson
-                    key={lesson.id}
-                    lesson={lesson}
-                    index={lIdx}
-                    courseId={courseId!}
-                    isCurrent={lesson.id === lessonId}
-                  />
+      {/* Sidebar */}
+      <Box sx={{ width: 300, borderLeft: 1, borderColor: 'divider', bgcolor: 'background.paper', display: { xs: 'none', lg: 'flex' }, flexDirection: 'column' }}>
+        <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+          <Typography variant="subtitle2" fontWeight={600}>Course Content</Typography>
+        </Box>
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
+          {sections.map((section) => (
+            <Box key={section.id}>
+              <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ px: 2, py: 1, display: 'block', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                {section.title}
+              </Typography>
+              <List dense disablePadding>
+                {section.lessons.map((lesson) => (
+                  <SidebarLesson key={lesson.id} lesson={lesson} courseId={courseId!} isCurrent={lesson.id === lessonId} />
                 ))}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
-    </div>
+              </List>
+              <Divider />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
-function SidebarLesson({
-  lesson, index, courseId, isCurrent,
-}: {
-  lesson: LessonWithStatus; index: number; courseId: string; isCurrent: boolean;
+function SidebarLesson({ lesson, courseId, isCurrent }: {
+  lesson: LessonWithStatus; courseId: string; isCurrent: boolean;
 }) {
   const isClickable = lesson.status !== 'locked';
   const icon = lesson.type === 'quiz'
     ? lesson.status === 'completed'
-      ? <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--success))]" />
+      ? <CheckCircleIcon color="success" sx={{ fontSize: 16 }} />
       : lesson.status === 'locked'
-        ? <Lock className="w-3.5 h-3.5 text-muted-foreground" />
-        : <HelpCircle className="w-3.5 h-3.5 text-primary" />
+        ? <LockIcon sx={{ fontSize: 16 }} color="disabled" />
+        : <QuizIcon color="primary" sx={{ fontSize: 16 }} />
     : {
-        locked: <Lock className="w-3.5 h-3.5 text-muted-foreground" />,
-        available: <Circle className="w-3.5 h-3.5 text-primary" />,
-        'in-progress': <Play className="w-3.5 h-3.5 text-primary" />,
-        completed: <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--success))]" />,
+        locked: <LockIcon sx={{ fontSize: 16 }} color="disabled" />,
+        available: <RadioButtonUncheckedIcon color="primary" sx={{ fontSize: 16 }} />,
+        'in-progress': <PlayArrowIcon color="primary" sx={{ fontSize: 16 }} />,
+        completed: <CheckCircleIcon color="success" sx={{ fontSize: 16 }} />,
       }[lesson.status];
 
-  const content = (
-    <div
-      className={cn(
-        'flex items-center gap-2 px-2 py-2 rounded text-sm transition-colors',
-        isCurrent && 'bg-primary/10 border border-primary/20',
-        !isCurrent && isClickable && 'hover:bg-muted/50 cursor-pointer',
-        lesson.status === 'locked' && 'opacity-50',
-      )}
+  return (
+    <ListItemButton
+      component={isClickable && !isCurrent ? Link : 'div'}
+      {...(isClickable && !isCurrent ? { to: `/training/${courseId}/${lesson.id}` } : {})}
+      disabled={lesson.status === 'locked'}
+      selected={isCurrent}
+      dense
+      sx={{ py: 0.75 }}
     >
-      {icon}
-      <span className={cn('flex-1 truncate text-xs', isCurrent ? 'font-medium text-foreground' : 'text-muted-foreground')}>
-        {lesson.title}
-      </span>
-      {lesson.type === 'quiz' ? (
-        <span className="text-[10px] text-muted-foreground">Quiz</span>
-      ) : (
-        <span className="text-[10px] text-muted-foreground">{lesson.durationMinutes}m</span>
-      )}
-    </div>
+      <ListItemIcon sx={{ minWidth: 28 }}>{icon}</ListItemIcon>
+      <ListItemText
+        primary={lesson.title}
+        primaryTypographyProps={{
+          variant: 'caption',
+          fontWeight: isCurrent ? 600 : 400,
+          noWrap: true,
+        }}
+      />
+      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>
+        {lesson.type === 'quiz' ? 'Quiz' : `${lesson.durationMinutes}m`}
+      </Typography>
+    </ListItemButton>
   );
-
-  return isClickable && !isCurrent ? (
-    <Link to={`/training/${courseId}/${lesson.id}`}>{content}</Link>
-  ) : content;
 }
 
 export default LessonPlayer;

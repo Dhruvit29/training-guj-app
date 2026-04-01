@@ -1,16 +1,33 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLms } from '@/contexts/LmsContext';
-import { Award } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  ArrowLeft, Play, Lock, CheckCircle2, Circle, ChevronDown,
-  Clock, BookOpen, User, HelpCircle,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import LinearProgress from '@mui/material/LinearProgress';
+import Paper from '@mui/material/Paper';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Grid from '@mui/material/Grid';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import LockIcon from '@mui/icons-material/Lock';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import PersonIcon from '@mui/icons-material/Person';
+import QuizIcon from '@mui/icons-material/Quiz';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Title from '@/common/components/Title';
+import GcPageContainer from '@/common/components/GcPageContainer';
 import type { SectionWithLessons, LessonWithStatus } from '@/types/lms';
 
 const CourseDetail: React.FC = () => {
@@ -24,194 +41,192 @@ const CourseDetail: React.FC = () => {
 
   if (!course) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <p className="text-lg text-muted-foreground">Course not found</p>
-          <Button variant="link" onClick={() => navigate('/training')}>Back to catalog</Button>
-        </div>
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <Box textAlign="center">
+          <Typography color="text.secondary" gutterBottom>Course not found</Typography>
+          <Button onClick={() => navigate('/training')}>Back to catalog</Button>
+        </Box>
+      </Box>
     );
   }
 
-  const handleEnroll = () => {
-    enroll(course.id);
-  };
-
-  const handleContinue = () => {
-    if (next) navigate(`/training/${courseId}/${next.lessonId}`);
-  };
-
   return (
-    <div className="min-h-full bg-background">
-      {/* Top bar */}
-      <div className="border-b bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/training')} className="gap-2 -ml-2">
-            <ArrowLeft className="w-4 h-4" /> Back to courses
-          </Button>
-        </div>
-      </div>
+    <>
+      <Box sx={{ px: { xs: 2, sm: 3 }, pt: 1 }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/training')} size="small" sx={{ mb: 1 }}>
+          Back to courses
+        </Button>
+      </Box>
 
-      {/* Hero */}
-      <div className="bg-primary/5 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-4">
-              <Badge variant="outline">{course.category}</Badge>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{course.title}</h1>
-              <p className="text-muted-foreground leading-relaxed">{course.description}</p>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><User className="w-4 h-4" />{course.instructor}</span>
-                <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{course.totalDurationMinutes} min</span>
-                <span className="flex items-center gap-1"><BookOpen className="w-4 h-4" />{course.totalLessons} lessons</span>
-              </div>
-              {course.enrolled ? (
-                <div className="space-y-2 pt-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{course.completedLessons}/{course.totalLessons} completed</span>
-                    <span className="font-medium text-foreground">{course.progressPercent}%</span>
-                  </div>
-                  <Progress value={course.progressPercent} className="h-2" />
-                  {next && (
-                    <Button onClick={handleContinue} className="mt-3 gap-2">
-                      <Play className="w-4 h-4" />
-                      {course.progressPercent > 0 ? 'Continue Learning' : 'Start Course'}
+      {/* Hero section */}
+      <Paper elevation={0} sx={{ mx: { xs: 2, sm: 3 }, p: { xs: 2, sm: 3 }, mb: 2, bgcolor: 'primary.main', color: '#fff', borderRadius: 2 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, lg: 8 }}>
+            <Chip label={course.category} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#fff', mb: 1.5 }} />
+            <Typography variant="h5" fontWeight={700} gutterBottom>{course.title}</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.85, mb: 2, lineHeight: 1.6 }}>{course.description}</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 2 }}>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: 0.8 }}>
+                <PersonIcon fontSize="small" /> {course.instructor}
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: 0.8 }}>
+                <AccessTimeIcon fontSize="small" /> {course.totalDurationMinutes} min
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: 0.8 }}>
+                <MenuBookIcon fontSize="small" /> {course.totalLessons} lessons
+              </Typography>
+            </Box>
+
+            {course.enrolled ? (
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    {course.completedLessons}/{course.totalLessons} completed
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>{course.progressPercent}%</Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={course.progressPercent}
+                  sx={{ height: 6, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.2)', '& .MuiLinearProgress-bar': { bgcolor: '#fff' } }}
+                />
+                {next && (
+                  <Button
+                    variant="contained"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={() => navigate(`/training/${courseId}/${next.lessonId}`)}
+                    sx={{ mt: 2, bgcolor: '#fff', color: 'primary.main', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
+                  >
+                    {course.progressPercent > 0 ? 'Continue Learning' : 'Start Course'}
+                  </Button>
+                )}
+                {course.progressPercent === 100 && (
+                  <Box sx={{ display: 'flex', gap: 1.5, mt: 2, alignItems: 'center' }}>
+                    <Chip label="Course Completed! 🎉" color="success" size="small" />
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<EmojiEventsIcon />}
+                      onClick={() => navigate(`/training/${courseId}/certificate`)}
+                      sx={{ borderColor: '#fff', color: '#fff', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.1)' } }}
+                    >
+                      View Certificate
                     </Button>
-                  )}
-                  {course.progressPercent === 100 && (
-                    <div className="flex items-center gap-3 mt-3">
-                      <Badge className="bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">Course Completed! 🎉</Badge>
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/training/${courseId}/certificate`)} className="gap-2">
-                        <Award className="w-4 h-4" /> View Certificate
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button onClick={handleEnroll} size="lg" className="mt-2 gap-2">
-                  <Play className="w-4 h-4" /> Enroll & Start
-                </Button>
-              )}
-            </div>
-            <div className="hidden lg:block">
-              <img
-                src={course.thumbnailUrl}
-                alt={course.title}
-                className="w-full aspect-video object-cover rounded-lg shadow-md"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+                  </Box>
+                )}
+              </Box>
+            ) : (
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<PlayArrowIcon />}
+                onClick={() => enroll(course.id)}
+                sx={{ mt: 1, bgcolor: '#fff', color: 'primary.main', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
+              >
+                Enroll & Start
+              </Button>
+            )}
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+            <Box
+              component="img"
+              src={course.thumbnailUrl}
+              alt={course.title}
+              sx={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: 2 }}
+            />
+          </Grid>
+        </Grid>
+      </Paper>
 
       {/* Curriculum */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-xl font-semibold mb-6 text-foreground">Course Curriculum</h2>
-        <div className="space-y-3">
-          {sections.map((section, sIdx) => (
-            <CurriculumSection
-              key={section.id}
-              section={section}
-              sectionIndex={sIdx}
-              courseId={courseId!}
-              enrolled={course.enrolled}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+      <GcPageContainer noPaper>
+        <Typography variant="h6" gutterBottom>Course Curriculum</Typography>
+        {sections.map((section, sIdx) => (
+          <CurriculumSection key={section.id} section={section} sectionIndex={sIdx} courseId={courseId!} enrolled={course.enrolled} />
+        ))}
+      </GcPageContainer>
+    </>
   );
 };
 
-function CurriculumSection({
-  section, sectionIndex, courseId, enrolled,
-}: {
+function CurriculumSection({ section, sectionIndex, courseId, enrolled }: {
   section: SectionWithLessons; sectionIndex: number; courseId: string; enrolled: boolean;
 }) {
   const completedCount = section.lessons.filter(l => l.status === 'completed').length;
   const totalMinutes = section.lessons.reduce((sum, l) => sum + l.durationMinutes, 0);
 
   return (
-    <Collapsible defaultOpen={sectionIndex === 0 || section.lessons.some(l => l.status === 'in-progress' || l.status === 'available')}>
-      <CollapsibleTrigger className="w-full">
-        <div className="flex items-center justify-between p-4 bg-card rounded-lg border hover:bg-muted/50 transition-colors">
-          <div className="flex items-center gap-3">
-            <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform [&[data-state=open]]:rotate-180" />
-            <div className="text-left">
-              <p className="font-medium text-foreground">Section {sectionIndex + 1}: {section.title}</p>
-              <p className="text-xs text-muted-foreground">{completedCount}/{section.lessons.length} lessons · {totalMinutes} min</p>
-            </div>
-          </div>
+    <Accordion
+      defaultExpanded={sectionIndex === 0 || section.lessons.some(l => l.status === 'in-progress' || l.status === 'available')}
+      sx={{ mb: 1, '&:before': { display: 'none' } }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
           {completedCount === section.lessons.length && section.lessons.length > 0 && (
-            <CheckCircle2 className="w-5 h-5 text-[hsl(var(--success))]" />
+            <CheckCircleIcon color="success" fontSize="small" />
           )}
-        </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
+          <Box>
+            <Typography variant="subtitle2" fontWeight={600}>
+              Section {sectionIndex + 1}: {section.title}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {completedCount}/{section.lessons.length} lessons · {totalMinutes} min
+            </Typography>
+          </Box>
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails sx={{ p: 0 }}>
+        <List dense disablePadding>
           {section.lessons.map((lesson, lIdx) => (
             <LessonRow key={lesson.id} lesson={lesson} index={lIdx} courseId={courseId} enrolled={enrolled} />
           ))}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+        </List>
+      </AccordionDetails>
+    </Accordion>
   );
 }
 
-function LessonRow({
-  lesson, index, courseId, enrolled,
-}: {
+function LessonRow({ lesson, index, courseId, enrolled }: {
   lesson: LessonWithStatus; index: number; courseId: string; enrolled: boolean;
 }) {
   const isClickable = enrolled && (lesson.status === 'available' || lesson.status === 'in-progress' || lesson.status === 'completed');
 
   const icon = lesson.type === 'quiz'
     ? lesson.status === 'completed'
-      ? <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />
+      ? <CheckCircleIcon color="success" fontSize="small" />
       : lesson.status === 'locked'
-        ? <Lock className="w-4 h-4 text-muted-foreground" />
-        : <HelpCircle className="w-4 h-4 text-primary" />
+        ? <LockIcon fontSize="small" color="disabled" />
+        : <QuizIcon color="primary" fontSize="small" />
     : {
-        locked: <Lock className="w-4 h-4 text-muted-foreground" />,
-        available: <Circle className="w-4 h-4 text-primary" />,
-        'in-progress': <Play className="w-4 h-4 text-primary" />,
-        completed: <CheckCircle2 className="w-4 h-4 text-[hsl(var(--success))]" />,
+        locked: <LockIcon fontSize="small" color="disabled" />,
+        available: <RadioButtonUncheckedIcon color="primary" fontSize="small" />,
+        'in-progress': <PlayArrowIcon color="primary" fontSize="small" />,
+        completed: <CheckCircleIcon color="success" fontSize="small" />,
       }[lesson.status];
 
-  const content = (
-    <div
-      className={cn(
-        'flex items-center gap-3 p-3 rounded-md transition-colors',
-        isClickable && 'hover:bg-muted/50 cursor-pointer',
-        lesson.status === 'locked' && 'opacity-60',
-        lesson.status === 'in-progress' && 'bg-primary/5',
-      )}
+  return (
+    <ListItemButton
+      component={isClickable ? Link : 'div'}
+      {...(isClickable ? { to: `/training/${courseId}/${lesson.id}` } : {})}
+      disabled={lesson.status === 'locked'}
+      sx={{
+        pl: 3,
+        ...(lesson.status === 'in-progress' ? { bgcolor: 'action.selected' } : {}),
+      }}
     >
-      {icon}
-      <div className="flex-1 min-w-0">
-        <p className={cn('text-sm', lesson.status === 'completed' ? 'text-muted-foreground' : 'text-foreground')}>
-          {index + 1}. {lesson.title}
-        </p>
-        {lesson.status === 'in-progress' && lesson.progress > 0 && (
-          <Progress value={lesson.progress} className="h-1 mt-1.5 w-32" />
-        )}
-      </div>
+      <ListItemIcon sx={{ minWidth: 32 }}>{icon}</ListItemIcon>
+      <ListItemText
+        primary={`${index + 1}. ${lesson.title}`}
+        primaryTypographyProps={{ variant: 'body2', color: lesson.status === 'completed' ? 'text.secondary' : 'text.primary' }}
+      />
       {lesson.type === 'quiz' ? (
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
-          <HelpCircle className="w-3 h-3" /> Quiz
-        </span>
+        <Typography variant="caption" color="text.secondary">Quiz</Typography>
       ) : (
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
-          <Clock className="w-3 h-3" /> {lesson.durationMinutes}m
-        </span>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+          <AccessTimeIcon sx={{ fontSize: 12 }} /> {lesson.durationMinutes}m
+        </Typography>
       )}
-    </div>
-  );
-
-  return isClickable ? (
-    <Link to={`/training/${courseId}/${lesson.id}`}>{content}</Link>
-  ) : (
-    content
+    </ListItemButton>
   );
 }
 
