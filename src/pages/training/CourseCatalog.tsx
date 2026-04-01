@@ -112,7 +112,7 @@ function CourseSection({ title, icon, courses }: { title: string; icon: React.Re
       </Box>
       <Grid container spacing={2.5}>
         {courses.map(course => (
-          <Grid key={course.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <Grid key={course.id} item xs={12} sm={6} md={4} lg={3}>
             <CourseCard course={course} />
           </Grid>
         ))}
