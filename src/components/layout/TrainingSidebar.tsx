@@ -1,127 +1,119 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { NavLink } from '@/components/NavLink';
-import {
-  LayoutDashboard, Users, ClipboardList, GraduationCap,
-  Video, Settings, ShieldCheck, ChevronDown, ChevronRight,
-} from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+
+interface TrainingSidebarContentProps {
+  onNavigate?: () => void;
+}
 
 const externalItems = [
-  { title: 'Dashboard', icon: LayoutDashboard, url: '#' },
-  { title: 'Classes', icon: Users, url: '#' },
-  { title: 'Registration', icon: ClipboardList, url: '#' },
-  { title: 'Exams', icon: GraduationCap, url: '#' },
+  { title: 'Dashboard', icon: <DashboardOutlinedIcon fontSize="small" /> },
+  { title: 'Classes', icon: <PeopleOutlinedIcon fontSize="small" /> },
+  { title: 'Registration', icon: <AssignmentOutlinedIcon fontSize="small" /> },
+  { title: 'Exams', icon: <SchoolOutlinedIcon fontSize="small" /> },
 ];
 
-const TrainingSidebar: React.FC = () => {
-  const { state } = useSidebar();
-  const collapsed = state === 'collapsed';
+const TrainingSidebarContent: React.FC<TrainingSidebarContentProps> = ({ onNavigate }) => {
   const location = useLocation();
-  const isTraining = location.pathname.startsWith('/training');
+  const navigate = useNavigate();
+  const isTraining = location.pathname.startsWith('/training') || location.pathname === '/';
+  const [trainingOpen, setTrainingOpen] = useState(isTraining);
+
+  const handleNav = (path: string) => {
+    navigate(path);
+    onNavigate?.();
+  };
+
+  const isActive = (path: string, exact = false) => {
+    if (exact) return location.pathname === path;
+    return location.pathname.startsWith(path);
+  };
+
+  const activeSx = {
+    bgcolor: 'rgba(255,255,255,0.12)',
+    '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' },
+  };
+
+  const inactiveSx = {
+    opacity: 0.55,
+    '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', opacity: 0.8 },
+  };
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarContent className="bg-[hsl(var(--nav-dark))]">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {/* External nav items (disabled/placeholder) */}
-              {externalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    className="text-[hsl(var(--sidebar-foreground))]/60 hover:bg-white/5 hover:text-[hsl(var(--sidebar-foreground))]/80 cursor-not-allowed"
-                    tooltip={item.title}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    {!collapsed && <span>{item.title}</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+    <List component="nav" dense disablePadding sx={{ pt: 0.5 }}>
+      {externalItems.map((item) => (
+        <ListItemButton key={item.title} disabled sx={inactiveSx}>
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.title} primaryTypographyProps={{ fontSize: '0.85rem' }} />
+        </ListItemButton>
+      ))}
 
-              {/* Training - expandable & active */}
-              <Collapsible defaultOpen={isTraining}>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      className="text-[hsl(var(--sidebar-foreground))] hover:bg-white/10 font-medium"
-                      tooltip="Training"
-                    >
-                      <Video className="w-4 h-4" />
-                      {!collapsed && (
-                        <>
-                          <span className="flex-1">Training</span>
-                          {isTraining ? (
-                            <ChevronDown className="w-3.5 h-3.5 text-[hsl(var(--sidebar-foreground))]/50" />
-                          ) : (
-                            <ChevronRight className="w-3.5 h-3.5 text-[hsl(var(--sidebar-foreground))]/50" />
-                          )}
-                        </>
-                      )}
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
+      {/* Training section */}
+      <ListItemButton
+        onClick={() => setTrainingOpen(!trainingOpen)}
+        sx={{
+          color: '#fff',
+          ...(isTraining ? { bgcolor: 'rgba(255,255,255,0.08)' } : {}),
+          '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' },
+        }}
+      >
+        <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+          <OndemandVideoOutlinedIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText primary="Training" primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600 }} />
+        {trainingOpen ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+      </ListItemButton>
 
-                  {!collapsed && (
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton asChild>
-                            <NavLink
-                              to="/training"
-                              end
-                              className="text-[hsl(var(--sidebar-foreground))]/70 hover:text-[hsl(var(--sidebar-foreground))] hover:bg-white/10"
-                              activeClassName="bg-white/10 text-white font-medium"
-                            >
-                              Videos
-                            </NavLink>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton asChild>
-                            <NavLink
-                              to="/training/admin"
-                              className="text-[hsl(var(--sidebar-foreground))]/70 hover:text-[hsl(var(--sidebar-foreground))] hover:bg-white/10"
-                              activeClassName="bg-white/10 text-white font-medium"
-                            >
-                              Admin
-                            </NavLink>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  )}
-                </SidebarMenuItem>
-              </Collapsible>
+      <Collapse in={trainingOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding dense>
+          <ListItemButton
+            sx={{
+              pl: 6,
+              color: '#fff',
+              ...(isActive('/training', true) || isActive('/', true) ? activeSx : { opacity: 0.7, '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', opacity: 1 } }),
+            }}
+            onClick={() => handleNav('/training')}
+          >
+            <ListItemText primary="Videos" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+          </ListItemButton>
+          <ListItemButton
+            sx={{
+              pl: 6,
+              color: '#fff',
+              ...(isActive('/training/admin') ? activeSx : { opacity: 0.7, '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', opacity: 1 } }),
+            }}
+            onClick={() => handleNav('/training/admin')}
+          >
+            <ListItemIcon sx={{ color: 'inherit', minWidth: 28 }}>
+              <AdminPanelSettingsOutlinedIcon sx={{ fontSize: 16 }} />
+            </ListItemIcon>
+            <ListItemText primary="Admin" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+          </ListItemButton>
+        </List>
+      </Collapse>
 
-              {/* Settings placeholder */}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className="text-[hsl(var(--sidebar-foreground))]/60 hover:bg-white/5 hover:text-[hsl(var(--sidebar-foreground))]/80 cursor-not-allowed"
-                  tooltip="Settings"
-                >
-                  <Settings className="w-4 h-4" />
-                  {!collapsed && <span>Settings</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      {/* Settings placeholder */}
+      <ListItemButton disabled sx={inactiveSx}>
+        <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+          <SettingsOutlinedIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: '0.85rem' }} />
+      </ListItemButton>
+    </List>
   );
 };
 
-export default TrainingSidebar;
+export default TrainingSidebarContent;

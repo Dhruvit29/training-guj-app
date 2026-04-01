@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLms } from '@/contexts/LmsContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff, BookOpen, Settings,
-} from 'lucide-react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import Title from '@/common/components/Title';
+import GcPageContainer from '@/common/components/GcPageContainer';
 import type { Course } from '@/types/lms';
 
 const AdminCourses: React.FC = () => {
@@ -35,14 +41,7 @@ const AdminCourses: React.FC = () => {
 
   const openEdit = (course: Course) => {
     setEditingCourse(course);
-    setForm({
-      title: course.title,
-      description: course.description,
-      instructor: course.instructor,
-      category: course.category,
-      thumbnailUrl: course.thumbnailUrl,
-      totalDurationMinutes: course.totalDurationMinutes,
-    });
+    setForm({ title: course.title, description: course.description, instructor: course.instructor, category: course.category, thumbnailUrl: course.thumbnailUrl, totalDurationMinutes: course.totalDurationMinutes });
     setDialogOpen(true);
   };
 
@@ -73,19 +72,14 @@ const AdminCourses: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-background">
-      <div className="border-b bg-card">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-foreground">Course Management</h1>
-            <Button onClick={openNew} className="gap-2">
-              <Plus className="w-4 h-4" /> New Course
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+    <>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ px: { xs: 2, sm: 3 }, pt: 2 }}>
+        <Title titleHeader="Course Management" />
+        <Button variant="contained" startIcon={<AddIcon />} onClick={openNew} size="small">
+          New Course
+        </Button>
+      </Box>
+      <GcPageContainer noPaper>
         {state.courses.map(course => {
           const sectionCount = state.sections.filter(s => s.courseId === course.id).length;
           const lessonCount = state.sections
@@ -93,85 +87,73 @@ const AdminCourses: React.FC = () => {
             .flatMap(s => state.lessons.filter(l => l.sectionId === s.id)).length;
 
           return (
-            <Card key={course.id} className="hover:shadow-sm transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <img src={course.thumbnailUrl} alt={course.title} className="w-28 h-16 object-cover rounded-md flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-foreground truncate">{course.title}</h3>
-                      <Badge variant={course.isPublished ? 'default' : 'secondary'}>
-                        {course.isPublished ? 'Published' : 'Draft'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{sectionCount} sections · {lessonCount} lessons · {course.category}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => togglePublish(course)} title={course.isPublished ? 'Unpublish' : 'Publish'}>
-                      {course.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(`/training/admin/${course.id}`)} title="Edit curriculum">
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(course)} title="Edit details">
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(course.id)} title="Delete">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+            <Card key={course.id} sx={{ mb: 1.5 }}>
+              <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    component="img"
+                    src={course.thumbnailUrl}
+                    alt={course.title}
+                    sx={{ width: 110, height: 64, objectFit: 'cover', borderRadius: 1, flexShrink: 0 }}
+                  />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Typography variant="subtitle2" fontWeight={600} noWrap>{course.title}</Typography>
+                      <Chip label={course.isPublished ? 'Published' : 'Draft'} size="small" color={course.isPublished ? 'primary' : 'default'} variant="outlined" />
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">
+                      {sectionCount} sections · {lessonCount} lessons · {course.category}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+                    <IconButton size="small" onClick={() => togglePublish(course)} title={course.isPublished ? 'Unpublish' : 'Publish'}>
+                      {course.isPublished ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                    </IconButton>
+                    <IconButton size="small" onClick={() => navigate(`/training/admin/${course.id}`)} title="Edit curriculum">
+                      <SettingsIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => openEdit(course)} title="Edit details">
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" color="error" onClick={() => handleDelete(course.id)} title="Delete">
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
           );
         })}
 
         {state.courses.length === 0 && (
-          <div className="text-center py-16">
-            <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-lg text-muted-foreground">No courses yet</p>
-            <Button onClick={openNew} className="mt-4 gap-2"><Plus className="w-4 h-4" /> Create your first course</Button>
-          </div>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <MenuBookIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+            <Typography color="text.secondary" gutterBottom>No courses yet</Typography>
+            <Button variant="contained" startIcon={<AddIcon />} onClick={openNew} sx={{ mt: 2 }}>
+              Create your first course
+            </Button>
+          </Box>
         )}
-      </div>
+      </GcPageContainer>
 
       {/* Course dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editingCourse ? 'Edit Course' : 'New Course'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Instructor</Label>
-                <Input value={form.instructor} onChange={e => setForm(f => ({ ...f, instructor: e.target.value }))} />
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Thumbnail URL</Label>
-              <Input value={form.thumbnailUrl} onChange={e => setForm(f => ({ ...f, thumbnailUrl: e.target.value }))} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={!form.title.trim()}>Save</Button>
-          </DialogFooter>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{editingCourse ? 'Edit Course' : 'New Course'}</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+          <TextField label="Title" size="small" fullWidth value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+          <TextField label="Description" size="small" fullWidth multiline rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField label="Instructor" size="small" fullWidth value={form.instructor} onChange={e => setForm(f => ({ ...f, instructor: e.target.value }))} />
+            <TextField label="Category" size="small" fullWidth value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} />
+          </Box>
+          <TextField label="Thumbnail URL" size="small" fullWidth value={form.thumbnailUrl} onChange={e => setForm(f => ({ ...f, thumbnailUrl: e.target.value }))} />
         </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleSave} disabled={!form.title.trim()}>Save</Button>
+        </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 
