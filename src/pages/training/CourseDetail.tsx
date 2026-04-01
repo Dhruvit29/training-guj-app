@@ -60,8 +60,8 @@ const CourseDetail: React.FC = () => {
 
       {/* Hero section */}
       <Paper elevation={0} sx={{ mx: { xs: 2, sm: 3 }, p: { xs: 2, sm: 3 }, mb: 2, bgcolor: 'primary.main', color: '#fff', borderRadius: 2 }}>
-        <Grid2 container spacing={3}>
-          <Grid2 size={{ xs: 12, lg: 8 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <Chip label={course.category} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#fff', mb: 1.5 }} />
             <Typography variant="h5" fontWeight={700} gutterBottom>{course.title}</Typography>
             <Typography variant="body2" sx={{ opacity: 0.85, mb: 2, lineHeight: 1.6 }}>{course.description}</Typography>
@@ -126,16 +126,16 @@ const CourseDetail: React.FC = () => {
                 Enroll & Start
               </Button>
             )}
-          </Grid2>
-          <Grid2 size={{ xs: 12, lg: 4 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Box
               component="img"
               src={course.thumbnailUrl}
               alt={course.title}
               sx={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: 2 }}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </Paper>
 
       {/* Curriculum */}

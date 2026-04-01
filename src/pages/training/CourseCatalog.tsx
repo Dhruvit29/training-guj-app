@@ -110,13 +110,13 @@ function CourseSection({ title, icon, courses }: { title: string; icon: React.Re
         <Typography variant="h6" fontSize="1.1rem">{title}</Typography>
         <Chip label={courses.length} size="small" variant="outlined" />
       </Box>
-      <Grid2 container spacing={2.5}>
+      <Grid container spacing={2.5}>
         {courses.map(course => (
-          <Grid2 key={course.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <Grid key={course.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
             <CourseCard course={course} />
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
     </Box>
   );
 }
