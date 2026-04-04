@@ -3,14 +3,16 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import muiTheme from "@/theme/muiTheme";
-import { LmsProvider } from "@/contexts/LmsContext";
+import {
+  LmsProvider,
+  CourseCatalog,
+  CourseDetail,
+  LessonPlayer,
+  CourseCertificate,
+  AdminCourses,
+  AdminCurriculum,
+} from "@/features/TrainingLms";
 import TrainingLayout from "@/components/layout/TrainingLayout";
-import CourseCatalog from "@/pages/training/CourseCatalog";
-import CourseDetail from "@/pages/training/CourseDetail";
-import LessonPlayer from "@/pages/training/LessonPlayer";
-import CourseCertificate from "@/pages/training/CourseCertificate";
-import AdminCourses from "@/pages/training/AdminCourses";
-import AdminCurriculum from "@/pages/training/AdminCurriculum";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
