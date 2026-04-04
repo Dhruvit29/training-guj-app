@@ -28,7 +28,7 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(durationMinutes * 60);
   const [showControls, setShowControls] = useState(true);
-  const controlsTimeout = useRef<NodeJS.Timeout>();
+  const controlsTimeout = useRef<ReturnType<typeof setTimeout>>();
   const isStream = videoUrl.includes('sharepoint.com') || videoUrl.includes('microsoftstream.com');
 
   useEffect(() => {
@@ -45,41 +45,37 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
     onProgress(maxWatchedRef.current);
     const totalDuration = durationMinutes * 60;
     if (totalDuration > 0 && maxWatchedRef.current >= totalDuration * 0.90) onComplete();
-  }, [durationMinutes, onProgress, onComplete]);
+  }, [onProgress, onComplete, durationMinutes]);
 
   const handleSeeking = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.currentTime > maxWatchedRef.current + 2) video.currentTime = maxWatchedRef.current;
+    if (video.currentTime > maxWatchedRef.current + 1) video.currentTime = maxWatchedRef.current;
   }, []);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
-    if (video) {
-      setDuration(video.duration);
-      if (maxWatchedRef.current > 0 && maxWatchedRef.current < video.duration) video.currentTime = maxWatchedRef.current;
-    }
+    if (video && video.duration && isFinite(video.duration)) setDuration(video.duration);
   }, []);
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) { video.play(); setIsPlaying(true); } else { video.pause(); setIsPlaying(false); }
-  };
+    if (video.paused) { video.play(); setIsPlaying(true); }
+    else { video.pause(); setIsPlaying(false); }
+  }, []);
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = !video.muted;
     setIsMuted(video.muted);
-  };
+  }, []);
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     const video = videoRef.current;
-    if (!video) return;
-    if (document.fullscreenElement) document.exitFullscreen();
-    else video.requestFullscreen();
-  };
+    if (video?.requestFullscreen) video.requestFullscreen();
+  }, []);
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
@@ -142,7 +138,6 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
         playsInline
       />
 
-      {/* Play overlay */}
       {!isPlaying && (
         <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(0,0,0,0.3)' }}>
           <Box sx={{ width: 64, height: 64, borderRadius: '50%', bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 3 }}>
@@ -151,7 +146,6 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
         </Box>
       )}
 
-      {/* Controls */}
       <Box
         className="video-controls"
         onClick={e => e.stopPropagation()}
@@ -161,7 +155,6 @@ const RestrictedVideoPlayer: React.FC<RestrictedVideoPlayerProps> = ({
           opacity: showControls ? 1 : 0, transition: 'opacity 0.3s',
         }}
       >
-        {/* Progress bar */}
         <Box onClick={handleProgressClick} sx={{ width: '100%', height: 6, bgcolor: 'rgba(255,255,255,0.2)', borderRadius: 3, mb: 1, cursor: 'pointer', position: 'relative' }}>
           <Box sx={{ position: 'absolute', top: 0, left: 0, height: '100%', bgcolor: 'rgba(255,255,255,0.3)', borderRadius: 3, width: `${(maxWatchedRef.current / duration) * 100}%` }} />
           <Box sx={{ position: 'absolute', top: 0, left: 0, height: '100%', bgcolor: 'primary.light', borderRadius: 3, width: `${(currentTime / duration) * 100}%`, transition: 'width 0.1s' }} />

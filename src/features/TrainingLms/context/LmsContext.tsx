@@ -2,9 +2,9 @@ import React, { createContext, useContext, useReducer, useCallback, useMemo, use
 import type {
   Course, Section, Lesson, UserProgress, UserCourseEnrollment,
   CourseWithProgress, SectionWithLessons, LessonStatus,
-} from '@/types/lms';
-import { mockCourses, mockSections, mockLessons } from '@/data/mockData';
-import { trainingApi } from '@/services/trainingApi';
+} from '../types/lms';
+import { mockCourses, mockSections, mockLessons } from '../data/mockData';
+import { trainingLmsApi } from '../api/trainingLmsApi';
 
 // ---------------------------------------------------------------------------
 // State
@@ -14,8 +14,8 @@ interface LmsState {
   courses: Course[];
   sections: Section[];
   lessons: Lesson[];
-  userProgress: Record<string, UserProgress>; // keyed by lessonId
-  enrollments: Record<string, UserCourseEnrollment>; // keyed by courseId
+  userProgress: Record<string, UserProgress>;
+  enrollments: Record<string, UserCourseEnrollment>;
   syncing: boolean;
 }
 
@@ -180,11 +180,9 @@ function lmsReducer(state: LmsState, action: LmsAction): LmsState {
 interface LmsContextValue {
   state: LmsState;
   dispatch: React.Dispatch<LmsAction>;
-  // API-backed actions
   enroll: (courseId: string) => Promise<void>;
   updateProgress: (lessonId: string, maxWatchedSeconds: number, durationMinutes: number) => Promise<void>;
   markComplete: (lessonId: string) => Promise<void>;
-  // Computed selectors
   getCoursesWithProgress: () => CourseWithProgress[];
   getCourseWithProgress: (courseId: string) => CourseWithProgress | undefined;
   getSectionsWithLessons: (courseId: string) => SectionWithLessons[];
@@ -197,15 +195,14 @@ const LmsContext = createContext<LmsContextValue | null>(null);
 export function LmsProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(lmsReducer, initialState);
 
-  // Fetch progress & enrollments from backend on mount
   useEffect(() => {
     let cancelled = false;
     async function load() {
       dispatch({ type: 'SET_SYNCING', syncing: true });
       try {
         const [progress, enrollments] = await Promise.all([
-          trainingApi.fetchUserProgress(),
-          trainingApi.fetchUserEnrollments(),
+          trainingLmsApi.fetchUserProgress(),
+          trainingLmsApi.fetchUserEnrollments(),
         ]);
         if (!cancelled) {
           if (Object.keys(progress).length > 0) {
@@ -225,11 +222,10 @@ export function LmsProvider({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
-  // API-backed actions that optimistically update state then call backend
   const enroll = useCallback(async (courseId: string) => {
     dispatch({ type: 'ENROLL', courseId });
     try {
-      await trainingApi.enrollInCourse({ courseId });
+      await trainingLmsApi.enrollInCourse({ courseId });
     } catch (err) {
       console.error('Failed to sync enrollment:', err);
     }
@@ -238,7 +234,7 @@ export function LmsProvider({ children }: { children: React.ReactNode }) {
   const updateProgress = useCallback(async (lessonId: string, maxWatchedSeconds: number, durationMinutes: number) => {
     dispatch({ type: 'UPDATE_PROGRESS', lessonId, maxWatchedSeconds, durationMinutes });
     try {
-      await trainingApi.updateLessonProgress({ lessonId, maxWatchedSeconds, durationMinutes });
+      await trainingLmsApi.updateLessonProgress({ lessonId, maxWatchedSeconds, durationMinutes });
     } catch (err) {
       console.error('Failed to sync progress:', err);
     }
@@ -247,7 +243,7 @@ export function LmsProvider({ children }: { children: React.ReactNode }) {
   const markComplete = useCallback(async (lessonId: string) => {
     dispatch({ type: 'MARK_COMPLETE', lessonId });
     try {
-      await trainingApi.markLessonComplete(lessonId);
+      await trainingLmsApi.markLessonComplete(lessonId);
     } catch (err) {
       console.error('Failed to sync completion:', err);
     }
@@ -290,9 +286,9 @@ export function LmsProvider({ children }: { children: React.ReactNode }) {
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map(lesson => {
           const status = getLessonStatus(lesson.id, allOrdered);
-          const progress = state.userProgress[lesson.id];
-          const pct = progress
-            ? Math.min(100, Math.round((progress.maxWatchedSeconds / (lesson.durationMinutes * 60)) * 100))
+          const prog = state.userProgress[lesson.id];
+          const pct = prog
+            ? Math.min(100, Math.round((prog.maxWatchedSeconds / (lesson.durationMinutes * 60)) * 100))
             : 0;
           return { ...lesson, status, progress: status === 'completed' ? 100 : pct };
         });

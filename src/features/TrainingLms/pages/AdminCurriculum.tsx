@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
+import { useLms } from '../context/LmsContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -32,7 +32,8 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import QuizIcon from '@mui/icons-material/Quiz';
 import Title from '@/common/components/Title';
 import GcPageContainer from '@/common/components/GcPageContainer';
-import type { Section, Lesson, QuizQuestion } from '@/types/lms';
+import { PATHS } from '@/router/paths';
+import type { Section, Lesson, QuizQuestion } from '../types/lms';
 
 const AdminCurriculum: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -174,7 +175,7 @@ const AdminCurriculum: React.FC = () => {
     <>
       <Box sx={{ px: { xs: 2, sm: 3 }, pt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/training/admin')} size="small">Back</Button>
+          <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(PATHS.LMS_ADMIN_COURSES)} size="small">Back</Button>
           <Box>
             <Title titleHeader={course.title} />
             <Typography variant="caption" color="text.secondary">Curriculum Builder</Typography>
@@ -241,7 +242,6 @@ const AdminCurriculum: React.FC = () => {
         )}
       </GcPageContainer>
 
-      {/* Section Dialog */}
       <Dialog open={sectionDialog} onClose={() => setSectionDialog(false)} maxWidth="xs" fullWidth>
         <DialogTitle>{editSection ? 'Edit Section' : 'New Section'}</DialogTitle>
         <DialogContent sx={{ pt: '16px !important' }}>
@@ -253,7 +253,6 @@ const AdminCurriculum: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Lesson Dialog */}
       <Dialog open={lessonDialog} onClose={() => setLessonDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editLesson ? 'Edit Lesson' : 'New Lesson'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>

@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
+import { useLms } from '../context/LmsContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DownloadIcon from '@mui/icons-material/Download';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { PATHS } from '@/router/paths';
 
 const CourseCertificate: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -22,7 +23,7 @@ const CourseCertificate: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <Box textAlign="center">
           <Typography color="text.secondary" gutterBottom>Course not found</Typography>
-          <Button onClick={() => navigate('/training')}>Back to catalog</Button>
+          <Button onClick={() => navigate(PATHS.LMS_CATALOG)}>Back to catalog</Button>
         </Box>
       </Box>
     );
@@ -37,7 +38,7 @@ const CourseCertificate: React.FC = () => {
           <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mb: 2 }}>
             Complete all {course.totalLessons} lessons to earn your certificate. You've completed {course.completedLessons} so far.
           </Typography>
-          <Button variant="outlined" onClick={() => navigate(`/training/${courseId}`)}>Continue Course</Button>
+          <Button variant="outlined" onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}`)}>Continue Course</Button>
         </Box>
       </Box>
     );
@@ -57,7 +58,7 @@ const CourseCertificate: React.FC = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 3, py: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-        <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => navigate(`/training/${courseId}`)}>Back to Course</Button>
+        <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}`)}>Back to Course</Button>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" startIcon={<DownloadIcon />} onClick={handleDownload} size="small">Download Certificate</Button>
       </Box>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
+import { useLms } from '../context/LmsContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -28,7 +28,8 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Title from '@/common/components/Title';
 import GcPageContainer from '@/common/components/GcPageContainer';
-import type { SectionWithLessons, LessonWithStatus } from '@/types/lms';
+import { PATHS } from '@/router/paths';
+import type { SectionWithLessons, LessonWithStatus } from '../types/lms';
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -44,7 +45,7 @@ const CourseDetail: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <Box textAlign="center">
           <Typography color="text.secondary" gutterBottom>Course not found</Typography>
-          <Button onClick={() => navigate('/training')}>Back to catalog</Button>
+          <Button onClick={() => navigate(PATHS.LMS_CATALOG)}>Back to catalog</Button>
         </Box>
       </Box>
     );
@@ -53,15 +54,14 @@ const CourseDetail: React.FC = () => {
   return (
     <>
       <Box sx={{ px: { xs: 2, sm: 3 }, pt: 1 }}>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/training')} size="small" sx={{ mb: 1 }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(PATHS.LMS_CATALOG)} size="small" sx={{ mb: 1 }}>
           Back to courses
         </Button>
       </Box>
 
-      {/* Hero section */}
       <Paper elevation={0} sx={{ mx: { xs: 2, sm: 3 }, p: { xs: 2, sm: 3 }, mb: 2, bgcolor: 'primary.main', color: '#fff', borderRadius: 2 }}>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, lg: 8 }}>
+          <Grid item xs={12} lg={8}>
             <Chip label={course.category} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#fff', mb: 1.5 }} />
             <Typography variant="h5" fontWeight={700} gutterBottom>{course.title}</Typography>
             <Typography variant="body2" sx={{ opacity: 0.85, mb: 2, lineHeight: 1.6 }}>{course.description}</Typography>
@@ -94,7 +94,7 @@ const CourseDetail: React.FC = () => {
                   <Button
                     variant="contained"
                     startIcon={<PlayArrowIcon />}
-                    onClick={() => navigate(`/training/${courseId}/${next.lessonId}`)}
+                    onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}/${next.lessonId}`)}
                     sx={{ mt: 2, bgcolor: '#fff', color: 'primary.main', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
                   >
                     {course.progressPercent > 0 ? 'Continue Learning' : 'Start Course'}
@@ -107,7 +107,7 @@ const CourseDetail: React.FC = () => {
                       variant="outlined"
                       size="small"
                       startIcon={<EmojiEventsIcon />}
-                      onClick={() => navigate(`/training/${courseId}/certificate`)}
+                      onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}/certificate`)}
                       sx={{ borderColor: '#fff', color: '#fff', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.1)' } }}
                     >
                       View Certificate
@@ -127,7 +127,7 @@ const CourseDetail: React.FC = () => {
               </Button>
             )}
           </Grid>
-          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+          <Grid item xs={12} lg={4} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Box
               component="img"
               src={course.thumbnailUrl}
@@ -138,7 +138,6 @@ const CourseDetail: React.FC = () => {
         </Grid>
       </Paper>
 
-      {/* Curriculum */}
       <GcPageContainer noPaper>
         <Typography variant="h6" gutterBottom>Course Curriculum</Typography>
         {sections.map((section, sIdx) => (
@@ -207,7 +206,7 @@ function LessonRow({ lesson, index, courseId, enrolled }: {
   return (
     <ListItemButton
       component={isClickable ? Link : 'div'}
-      {...(isClickable ? { to: `/training/${courseId}/${lesson.id}` } : {})}
+      {...(isClickable ? { to: `${PATHS.LMS_CATALOG}/${courseId}/${lesson.id}` } : {})}
       disabled={lesson.status === 'locked'}
       sx={{
         pl: 3,

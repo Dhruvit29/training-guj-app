@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
+import { useLms } from '../context/LmsContext';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -18,7 +18,8 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Title from '@/common/components/Title';
 import GcPageContainer from '@/common/components/GcPageContainer';
-import type { CourseWithProgress } from '@/types/lms';
+import { PATHS } from '@/router/paths';
+import type { CourseWithProgress } from '../types/lms';
 
 const CourseCatalog: React.FC = () => {
   const { getCoursesWithProgress } = useLms();
@@ -45,7 +46,6 @@ const CourseCatalog: React.FC = () => {
         <Title titleHeader="Training Center" />
       </Box>
       <GcPageContainer noPaper>
-        {/* Search & Filters */}
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 3 }}>
           <TextField
             size="small"
@@ -76,17 +76,12 @@ const CourseCatalog: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Continue Learning */}
         {enrolled.length > 0 && (
           <CourseSection title="Continue Learning" icon={<PlayArrowIcon color="primary" />} courses={enrolled} />
         )}
-
-        {/* Available */}
         {available.length > 0 && (
           <CourseSection title="Available Courses" icon={<MenuBookIcon color="primary" />} courses={available} />
         )}
-
-        {/* Completed */}
         {completed.length > 0 && (
           <CourseSection title="Completed" icon={<MenuBookIcon color="disabled" />} courses={completed} />
         )}
@@ -112,7 +107,7 @@ function CourseSection({ title, icon, courses }: { title: string; icon: React.Re
       </Box>
       <Grid container spacing={2.5}>
         {courses.map(course => (
-          <Grid key={course.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <Grid key={course.id} item xs={12} sm={6} md={4} lg={3}>
             <CourseCard course={course} />
           </Grid>
         ))}
@@ -122,8 +117,6 @@ function CourseSection({ title, icon, courses }: { title: string; icon: React.Re
 }
 
 function CourseCard({ course }: { course: CourseWithProgress }) {
-  const navigate = React.useCallback(() => {}, []);
-
   return (
     <Card
       sx={{
@@ -134,7 +127,7 @@ function CourseCard({ course }: { course: CourseWithProgress }) {
         '&:hover': { boxShadow: 4, transform: 'translateY(-2px)' },
       }}
     >
-      <CardActionArea component={Link} to={`/training/${course.id}`} sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <CardActionArea component={Link} to={`${PATHS.LMS_CATALOG}/${course.id}`} sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
         <Box sx={{ position: 'relative' }}>
           <CardMedia
             component="img"

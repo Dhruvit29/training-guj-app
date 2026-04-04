@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
-import RestrictedVideoPlayer from '@/components/lms/RestrictedVideoPlayer';
-import QuizPlayer from '@/components/lms/QuizPlayer';
+import { useLms } from '../context/LmsContext';
+import RestrictedVideoPlayer from '../components/RestrictedVideoPlayer';
+import QuizPlayer from '../components/QuizPlayer';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -21,7 +21,8 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import QuizIcon from '@mui/icons-material/Quiz';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import type { LessonWithStatus } from '@/types/lms';
+import { PATHS } from '@/router/paths';
+import type { LessonWithStatus } from '../types/lms';
 
 const LessonPlayer: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
@@ -51,7 +52,7 @@ const LessonPlayer: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <Box textAlign="center">
           <Typography color="text.secondary" gutterBottom>Lesson not found</Typography>
-          <Button onClick={() => navigate('/training')}>Back to catalog</Button>
+          <Button onClick={() => navigate(PATHS.LMS_CATALOG)}>Back to catalog</Button>
         </Box>
       </Box>
     );
@@ -59,11 +60,9 @@ const LessonPlayer: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: 'calc(100vh - 48px)' }}>
-      {/* Main content */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-          <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => navigate(`/training/${courseId}`)}>
+          <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}`)}>
             Back
           </Button>
           <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -72,7 +71,6 @@ const LessonPlayer: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Video or Quiz */}
         {currentLesson.type === 'quiz' && currentLesson.quizQuestions ? (
           <QuizPlayer
             questions={currentLesson.quizQuestions}
@@ -91,7 +89,6 @@ const LessonPlayer: React.FC = () => {
           </Box>
         )}
 
-        {/* Lesson info */}
         <Box sx={{ p: 3, maxWidth: 900 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1 }}>
             <Typography variant="h5" fontWeight={700}>{currentLesson.title}</Typography>
@@ -100,14 +97,13 @@ const LessonPlayer: React.FC = () => {
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>{currentLesson.description}</Typography>
 
-          {/* Next lesson CTA */}
           {isCompleted && nextLesson && (
             <Paper variant="outlined" sx={{ mt: 3, p: 2, display: 'flex', alignItems: 'center', gap: 2, bgcolor: 'action.hover' }}>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" fontWeight={600}>Up Next</Typography>
                 <Typography variant="body2" color="text.secondary">{nextLesson.title}</Typography>
               </Box>
-              <Button variant="contained" endIcon={<ChevronRightIcon />} onClick={() => navigate(`/training/${courseId}/${nextLesson.id}`)}>
+              <Button variant="contained" endIcon={<ChevronRightIcon />} onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}/${nextLesson.id}`)}>
                 Next Lesson
               </Button>
             </Paper>
@@ -118,13 +114,13 @@ const LessonPlayer: React.FC = () => {
               <Typography variant="h6" fontWeight={600}>🎉 Course Complete!</Typography>
               <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>You've finished all lessons in this course.</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
-                <Button variant="outlined" onClick={() => navigate('/training')} sx={{ borderColor: '#fff', color: '#fff' }}>
+                <Button variant="outlined" onClick={() => navigate(PATHS.LMS_CATALOG)} sx={{ borderColor: '#fff', color: '#fff' }}>
                   Back to Training Center
                 </Button>
                 <Button
                   variant="contained"
                   startIcon={<EmojiEventsIcon />}
-                  onClick={() => navigate(`/training/${courseId}/certificate`)}
+                  onClick={() => navigate(`${PATHS.LMS_CATALOG}/${courseId}/certificate`)}
                   sx={{ bgcolor: '#fff', color: 'success.main', '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}
                 >
                   View Certificate
@@ -135,7 +131,6 @@ const LessonPlayer: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Sidebar */}
       <Box sx={{ width: 300, borderLeft: 1, borderColor: 'divider', bgcolor: 'background.paper', display: { xs: 'none', lg: 'flex' }, flexDirection: 'column' }}>
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Typography variant="subtitle2" fontWeight={600}>Course Content</Typography>
@@ -180,7 +175,7 @@ function SidebarLesson({ lesson, courseId, isCurrent }: {
   return (
     <ListItemButton
       component={isClickable && !isCurrent ? Link : 'div'}
-      {...(isClickable && !isCurrent ? { to: `/training/${courseId}/${lesson.id}` } : {})}
+      {...(isClickable && !isCurrent ? { to: `${PATHS.LMS_CATALOG}/${courseId}/${lesson.id}` } : {})}
       disabled={lesson.status === 'locked'}
       selected={isCurrent}
       dense

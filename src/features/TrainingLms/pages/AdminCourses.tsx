@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLms } from '@/contexts/LmsContext';
+import { useLms } from '../context/LmsContext';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -13,8 +13,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -24,7 +22,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Title from '@/common/components/Title';
 import GcPageContainer from '@/common/components/GcPageContainer';
-import type { Course } from '@/types/lms';
+import { PATHS } from '@/router/paths';
+import type { Course } from '../types/lms';
 
 const AdminCourses: React.FC = () => {
   const navigate = useNavigate();
@@ -109,7 +108,7 @@ const AdminCourses: React.FC = () => {
                     <IconButton size="small" onClick={() => togglePublish(course)} title={course.isPublished ? 'Unpublish' : 'Publish'}>
                       {course.isPublished ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
                     </IconButton>
-                    <IconButton size="small" onClick={() => navigate(`/training/admin/${course.id}`)} title="Edit curriculum">
+                    <IconButton size="small" onClick={() => navigate(`${PATHS.LMS_ADMIN_COURSES}/${course.id}`)} title="Edit curriculum">
                       <SettingsIcon fontSize="small" />
                     </IconButton>
                     <IconButton size="small" onClick={() => openEdit(course)} title="Edit details">
@@ -136,7 +135,6 @@ const AdminCourses: React.FC = () => {
         )}
       </GcPageContainer>
 
-      {/* Course dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{editingCourse ? 'Edit Course' : 'New Course'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
